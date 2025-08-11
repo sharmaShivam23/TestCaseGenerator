@@ -6,6 +6,8 @@ import Home2 from '../components/HomepageCores/Home2'
 import Home3 from '../components/HomepageCores/Home3'
 import Contact from './Contact'
 import Testimonials from '../components/HomepageCores/Testimonials'
+import Working from './Working'
+import ScrollTop from './ScrollTop'
 const Home = () => {
   return (
    <>
@@ -17,6 +19,7 @@ const Home = () => {
     </div>
   </div>
 
+  {/* <ScrollTop/> */}
   {/* Foreground content (not blurred) */}
   <div className="relative z-10">
     <HomeMainPage />
@@ -24,6 +27,7 @@ const Home = () => {
 </div>
 
 <Home2/>
+<Working/>
 <Home3/>
 <Testimonials/>
 <Contact/>

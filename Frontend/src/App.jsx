@@ -6,10 +6,14 @@ import AuthCallback from './pages/AuthCallback';
 import SelectRepo from './pages/ShowRepo';
 import SelectFiles from './pages/SelectFiles';
 import Contact from './pages/Contact';
+import ScrollTop from './pages/ScrollTop';
 // import SelectRepo from './pages/ShowRepo';
+import Footer from './pages/Footer';
 function App() {
   return (
+    <div className="p relative">
     <Router>
+      <ScrollTop/>
       <Routes>
         <Route path="/" element={<HomeMainPage />} />
          <Route path="/auth/callback" element={<AuthCallback />} />
@@ -17,7 +21,9 @@ function App() {
         <Route path="/select-repo" element={<SelectRepo />} />
         <Route path="/select-files" element={<SelectFiles />} />
       </Routes>
+      <Footer/>
     </Router>
+    </div>
   );
 }
 

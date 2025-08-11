@@ -43,7 +43,7 @@ const Home2 = () => {
           <div className="absolute w-[400px] h-[600px] bg-[#460F9E] rounded-full blur-[200px] opacity-60"></div>
            
       
-          <div className="relative z-10 w-full max-w-4xl">
+          <div className="relative z-5 w-full max-w-4xl">
             <Example />
           </div>
 
