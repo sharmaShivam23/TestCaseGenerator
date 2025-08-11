@@ -21,7 +21,8 @@ const Home2 = () => {
   }, [navigate]);
 
   const handleLogin = () => {
-  window.location.href = "http://localhost:5000/api/auth/github"
+  window.location.href = "https://testcasegenerator.onrender.com/api/auth/github"
+  // window.location.href = "http://localhost:5000/api/auth/github"
   }
 
   return (

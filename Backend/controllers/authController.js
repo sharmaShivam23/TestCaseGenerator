@@ -19,7 +19,8 @@ if (!CLIENT_ID || !CLIENT_SECRET) {
 
 // GET /api/auth/github -> redirect user to GitHub
 router.get('/github', (req, res) => {
-  const redirectUri = "http://localhost:5000/api/auth/github/callback";
+  const redirectUri = "https://testcasegenerator.onrender.com/api/auth/github/callback";
+  // const redirectUri = "http://localhost:5000/api/auth/github/callback";
   // const redirectUri = "http://localhost:5000/api/github/callback";
   // http://localhost:5000/api/auth/github
   const url = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(
