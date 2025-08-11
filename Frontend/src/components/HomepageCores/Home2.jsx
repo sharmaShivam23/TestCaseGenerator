@@ -37,9 +37,7 @@ const Home2 = () => {
 
         <div className="relative z-[100] min-h-screen w-full flex items-center justify-center bg-[linear-gradient(to_bottom,_#000_50%,_#460F9E_100%)] overflow-hidden">  
           
-        {/* <div className="relative z-[100] min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-[#0a0a0f] to-[#3b0d5d] overflow-hidden">  
-           */}
-  
+       
           <div className="absolute w-[400px] h-[600px] bg-[#460F9E] rounded-full blur-[200px] opacity-60"></div>
            
       
@@ -47,7 +45,7 @@ const Home2 = () => {
             <Example />
           </div>
 
-           <div  onClick={handleLogin} className="btn flex absolute top-1/2 mt-16 z-50  justify-center items-center">
+           <div  onClick={handleLogin} className="btn flex absolute top-1/2 sm:mt-16 mt-24 z-50  justify-center items-center">
           <InteractiveHoverButton>Continue with GitHub</InteractiveHoverButton>
           </div>
           

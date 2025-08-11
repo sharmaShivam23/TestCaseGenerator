@@ -3,7 +3,7 @@ import { FaInstagram, FaLinkedin, FaTwitter } from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <footer className="relative flex flex-col bg-[linear-gradient(to_bottom,_#000_60%,_#460F9E_100%)]  h-[40vh] items-center bg-black text-white py-12 overflow-hidden">
+    <footer className="relative flex flex-col bg-[linear-gradient(to_bottom,_#000_60%,_#460F9E_100%)] h-auto  md:h-[50vh] items-center bg-black text-white py-12 overflow-x-hidden">
       {/* Star background */}
       <div className="absolute inset-0 z-0">
         <div className="w-full h-full bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 animate-[starMove_40s_linear_infinite]" />

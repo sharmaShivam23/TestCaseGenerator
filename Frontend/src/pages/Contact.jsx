@@ -56,7 +56,7 @@ const Contact = () => {
         backgroundPosition: "center",
         backgroundSize: "cover",
       }}
-      className="min-h-screen  relative text-white px-2 md:px-20 py-12 flex flex-col"
+      className="min-h-screen overflow-hidden  relative text-white px-2 md:px-20 py-12 flex flex-col"
     >
       <img
         src={contactbg}
@@ -83,10 +83,10 @@ const Contact = () => {
       </div>
 
       {/* Two-Column Layout */}
-      <div className="flex flex-col justify-center items-center md:flex-row gap-12 flex-1">
+      <div className="flex flex-col justify-center h-auto items-center md:flex-row gap-12 flex-1">
         {/* Left Info */}
-        <div className="md:w-1/2 flex h-full items-center justify-center animate-slideInLeft">
-          <div className="md:w-[80%] w-full h-[80vh] p-8 md:p-12 rounded-2xl shadow-2xl bg-white/10 backdrop-blur-3xl border border-white/20 transform transition-all duration-500 hover:scale-105">
+        <div className="md:w-1/2 flex h-auto items-center justify-center animate-slideInLeft">
+          <div className="md:w-[80%] w-[95%] h-[80vh] p-8 md:p-12 rounded-2xl shadow-2xl bg-white/10 backdrop-blur-3xl border border-white/20 transform transition-all duration-500 hover:scale-105">
             <h2 className="text-3xl font-bold mb-4 text-white">
               Why Reach Out?
             </h2>
@@ -172,6 +172,7 @@ const Contact = () => {
               sitekey={captcha}
               size="invisible"
               badge="bottomright"
+              className=""
               ref={recaptchaRef} 
             />
 

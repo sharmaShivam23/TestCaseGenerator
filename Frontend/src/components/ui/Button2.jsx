@@ -4,11 +4,14 @@
 import React from "react";
 import { ArrowRight } from "lucide-react";
 import { cn } from "../../../lib/utils";
-
+import { motion } from "framer-motion";
 
 export const InteractiveHoverButton = React.forwardRef(({ children, className, ...props }, ref) => {
   return (
-    <button
+    <motion.button
+       initial={{ scale : 1.3, opacity: 0 }}
+  whileInView={{ scale: 1, opacity: 1 }}
+  transition={{ duration: 0.5, ease: "easeOut" }}
       ref={ref}
       className={cn(
         "group relative w-auto text-xl mt-3 hover:text-violet-800 hover:shadow-2xl shadow-violet-600 cursor-pointer overflow-hidden rounded-full border bg-background p-3 px-6 text-center font-semibold",
@@ -26,7 +29,7 @@ export const InteractiveHoverButton = React.forwardRef(({ children, className, .
         <span>{children}</span>
         <ArrowRight />
       </div>
-    </button>
+    </motion.button>
   );
 });
 

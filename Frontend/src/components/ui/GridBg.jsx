@@ -9,9 +9,6 @@ export const Example = () => (
               "0 0 15px rgba(168,85,247,0.7), 0 0 30px rgba(99,102,241,0.5)",
           }}>Discover GitTestPULSe</p> 
           <p className="text-center z-50 mt-4 text-sm md:text-lg">Unlock the power of automated test case generation with GITTESTPULSe. Seamlessly integrate your GitHub repositories and generate comprehensive test summaries with ease.</p>
-          {/* <div  className="btn flex justify-center items-center mt-5">
-          <InteractiveHoverButton>Continue with GitHub</InteractiveHoverButton>
-          </div> */}
   </AnimatedGridBackgroundSection>
 )
 

@@ -18,4 +18,28 @@ body {
     --tile: var(--neutral-900);
   }
 }
+/* 
+bounce: {
+  				'0%, 100%': {
+  					transform: 'translateY(-5%)',
+  					animationTimingFunction: 'cubic-bezier(0.8, 0, 1, 1)'
+  				},
+  				'50%': {
+  					transform: 'translateY(0)',
+  					animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)'
+  				}
+  			}, */
+@keyframes bounce2 {
+  0%,  100% {
+    transform: translateY(-20px);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
 
+.bounce2 {
+  animation: bounce2 2s infinite;
+}
