@@ -3,6 +3,7 @@ import { Example } from "../ui/GridBg"; // Your grid background component
 import { InteractiveHoverButton } from "../ui/Button2";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import stars from "../../assets/images/stars.svg";
 // import { Particles } from "../ui/Particles";
 const Home2 = () => {
   const navigate = useNavigate();
@@ -28,9 +29,14 @@ const Home2 = () => {
       {/* Particles background */}
     
       <div id="Home" className="relative min-h-screen w-full flex items-center justify-center text-white bg-black overflow-hidden">
-    
-        <div className="relative z-[100] min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-[#0a0a0f] to-[#3b0d5d] overflow-hidden">  
+         <div className="stars absolute bottom-0 w-full flex justify-center">
+                <img src={stars} className="h-40 sm:h-80 object-contain" alt="stars" />
+              </div>
+
+        <div className="relative z-[100] min-h-screen w-full flex items-center justify-center bg-[linear-gradient(to_bottom,_#000_50%,_#460F9E_100%)] overflow-hidden">  
           
+        {/* <div className="relative z-[100] min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-[#0a0a0f] to-[#3b0d5d] overflow-hidden">  
+           */}
   
           <div className="absolute w-[400px] h-[600px] bg-[#460F9E] rounded-full blur-[200px] opacity-60"></div>
            

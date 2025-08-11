@@ -58,9 +58,7 @@ const HomeMainPage = () => {
       </div>
 
       {/* Stars Background */}
-      <div className="stars absolute bottom-0 w-full flex justify-center">
-        <img src={stars} className="h-40 sm:h-80 object-contain" alt="stars" />
-      </div>
+     
     </div>
   );
 };
