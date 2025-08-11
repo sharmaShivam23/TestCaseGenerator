@@ -1,5 +1,5 @@
 import React from 'react';
-import bg2 from "../../assets/images/reflect.jpeg";
+import bg2 from "../../assets/images/Reflect.jpeg";
 import ai from "../../assets/images/ai.svg";
 const Home3 = () => {
   return (
