@@ -27,7 +27,12 @@ const HomeMainPage = () => {
       <div className="main px-4 sm:px-14 py-6 flex flex-col-reverse sm:flex-row justify-center items-center gap-10">
         {/* Left Section */}
         <div className="left w-full sm:w-4/6 px-2 sm:px-10 flex flex-col gap-4">
-          <h1 style={{ fontFamily: "'Orbitron', sans-serif",}} className="text-3xl sm:text-5xl mt-4 font-bold leading-tight">
+          <h1  style={{
+            fontFamily: "'Orbitron', sans-serif",
+            WebkitBackgroundClip: "text",
+            textShadow:
+              "0 0 15px rgba(168,85,247,0.7), 0 0 30px rgba(99,102,241,0.5)",
+          }} className="text-3xl sm:text-5xl mt-4 font-bold leading-tight">
             Automate Your Test Case <br/> Generation with AI
           </h1>
           <p className="text-sm sm:text-base">

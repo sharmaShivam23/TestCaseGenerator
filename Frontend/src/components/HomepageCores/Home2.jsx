@@ -4,6 +4,7 @@ import { InteractiveHoverButton } from "../ui/Button2";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import stars from "../../assets/images/stars.svg";
+
 // import { Particles } from "../ui/Particles";
 const Home2 = () => {
   const navigate = useNavigate();

@@ -5,6 +5,7 @@ import HomeMainPage from '../components/HomepageCores/HomeMainPage'
 import Home2 from '../components/HomepageCores/Home2'
 import Home3 from '../components/HomepageCores/Home3'
 import Contact from './Contact'
+import Testimonials from '../components/HomepageCores/Testimonials'
 const Home = () => {
   return (
    <>
@@ -24,6 +25,7 @@ const Home = () => {
 
 <Home2/>
 <Home3/>
+<Testimonials/>
 <Contact/>
  </>
   )
