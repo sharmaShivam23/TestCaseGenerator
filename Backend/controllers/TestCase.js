@@ -191,11 +191,11 @@ exports.generateTestCase = async (req, res) => {
 //   }
 // };
 
-
+const axios = require("axios");
 
 exports.createPR = async (req, res) => {
   try {
-    const { repo, baseBranch = "main", filePath, content, prTitle } = req.body;
+    const { repo, filePath, content, prTitle } = req.body;
 
     if (!repo || !repo.includes("/")) {
       return res.status(400).json({ message: "Invalid repo format. Use 'owner/repo'." });
@@ -211,6 +211,13 @@ exports.createPR = async (req, res) => {
 
     const [owner, repoName] = repo.split("/");
 
+    // Step 0: Get the repo's default branch
+    const repoInfo = await axios.get(
+      `https://api.github.com/repos/${owner}/${repoName}`,
+      { headers: { Authorization: `token ${githubToken}` } }
+    );
+    const baseBranch = repoInfo.data.default_branch;
+
     // Step 1: Get the base branch's latest commit SHA
     const baseBranchData = await axios.get(
       `https://api.github.com/repos/${owner}/${repoName}/git/ref/heads/${baseBranch}`,
@@ -218,7 +225,7 @@ exports.createPR = async (req, res) => {
     );
     const latestCommitSha = baseBranchData.data.object.sha;
 
-    // Step 2: Create a new branch
+    // Step 2: Create a new branch from base branch
     const branchName = `test-case-${Date.now()}`;
     await axios.post(
       `https://api.github.com/repos/${owner}/${repoName}/git/refs`,
@@ -229,7 +236,7 @@ exports.createPR = async (req, res) => {
       { headers: { Authorization: `token ${githubToken}` } }
     );
 
-    // Step 3: Get the blob SHA of the file (if it exists)
+    // Step 3: Check if the file already exists in base branch
     let blobSha = null;
     try {
       const fileData = await axios.get(
@@ -238,10 +245,10 @@ exports.createPR = async (req, res) => {
       );
       blobSha = fileData.data.sha;
     } catch (err) {
-      console.warn("File not found, creating a new one:", filePath);
+      console.warn(`File not found in base branch (${baseBranch}): Creating new file`);
     }
 
-    // Step 4: Commit the file to the new branch
+    // Step 4: Commit file changes to the new branch
     await axios.put(
       `https://api.github.com/repos/${owner}/${repoName}/contents/${filePath}`,
       {

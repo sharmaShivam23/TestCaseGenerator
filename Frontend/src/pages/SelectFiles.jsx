@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useState, useRef } from "react";
 import API from "../api";
 import Tumnail from "../assets/images/Tumnail.svg";
@@ -15,7 +13,7 @@ export default function SelectFiles() {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [summaries, setSummaries] = useState([]);
   const [testCode, setTestCode] = useState("");
-  const [currentPath, setCurrentPath] = useState(""); 
+  const [currentPath, setCurrentPath] = useState("");
   const repo = localStorage.getItem("selectedRepo");
   const [loading, setLoading] = useState(true);
   const [loadingSummary, setLoadingSummary] = useState(false);
@@ -30,7 +28,8 @@ export default function SelectFiles() {
   const handleCopy = (ref) => {
     if (ref.current) {
       const text = ref.current.textContent;
-      navigator.clipboard.writeText(text)
+      navigator.clipboard
+        .writeText(text)
         .then(() => {
           toast.success("Copied to clipboard!");
         })
@@ -111,45 +110,34 @@ export default function SelectFiles() {
 
   //pull request flow
   const pushCodeToGithub = async () => {
-  if (!testCode) {
-    toast.error("No test code available to push");
+    if (!testCode) {
+      toast.error("No test code available to push");
+      return;
+    }
+    if (!selectedFiles.length) {
+    toast.error("No file selected for PR");
     return;
   }
-  setLoadingPush(true);
-  try {
-    // const branchName = `test-code-${Date.now()}`;
-    const commitMessage = "Add generated test code";
 
-  //  const r =  await API.post("/create-pr", {
-  //     repo,
-  //     // branchName : "GittestPulse",
-  //     filePath: selectedFiles[0], 
-  //     content: testCode,
-  //     prTitle : "Add generated test cases"
-  //     // commitMessage :  "Add generated test cases"
-  //   });
-  //   console.log(r);
-  const branchName = `test-case-${Date.now()}`;
-await API.post("/create-pr", {
-  repo,
-  branchName,
-  filePath: selectedFiles[0],
-  content: testCode,
-  prTitle: "Add generated test cases"
-});
-// toast.success(`Pull request created for branch ${branchName}`);
+    setLoadingPush(true);
+    try {
+      const branchName = `test-case-${Date.now()}`;
+      await API.post("/create-pr", {
+        repo,
+        branch: branchName,
+        filePath: selectedFiles[0],
+        content: testCode,
+        prTitle: "Add generated test cases",
+      });
 
-    
-
-    toast.success(`Pull request created for branch ${branchName}`);
-  } catch (err) {
-    console.error(err);
-    toast.error("Failed to push code to GitHub");
-  } finally {
-    setLoadingPush(false);
-  }
-};
-
+      toast.success(`Pull request created for branch ${branchName}`);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to push code to GitHub");
+    } finally {
+      setLoadingPush(false);
+    }
+  };
 
   return (
     <div
@@ -310,16 +298,15 @@ await API.post("/create-pr", {
       )}
 
       {/* //pull request button */}
-     {testCode && (
-      <button
-  onClick={pushCodeToGithub}
-  disabled={loadingPush}
-  className="mt-3 px-4 py-2 cursor-pointer rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm hover:shadow-[0_0_12px_rgba(16,185,129,0.8)] transition-all duration-300"
->
-  {loadingPush ? "Pushing to GitHub..." : "Push Code to GitHub"}
-</button>
-)}
-
+      {testCode && (
+        <button
+          onClick={pushCodeToGithub}
+          disabled={loadingPush}
+          className="mt-3 px-4 py-2 cursor-pointer rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm hover:shadow-[0_0_12px_rgba(16,185,129,0.8)] transition-all duration-300"
+        >
+          {loadingPush ? "Pushing to GitHub..." : "Push Code to GitHub"}
+        </button>
+      )}
 
       {testCode && (
         <div
@@ -355,7 +342,7 @@ await API.post("/create-pr", {
             {testCode}
           </pre>
         </div>
-       )} 
+      )}
 
       <style>
         {`
