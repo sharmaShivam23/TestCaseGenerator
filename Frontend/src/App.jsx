@@ -10,16 +10,6 @@ import ScrollTop from './pages/ScrollTop';
 import Lenis from 'lenis'
 import Footer from './pages/Footer';
 function App() {
-  
-const lenis = new Lenis();
-
-// Use requestAnimationFrame to continuously update the scroll
-function raf(time) {
-  lenis.raf(time);
-  requestAnimationFrame(raf);
-}
-
-requestAnimationFrame(raf);
   return (
     <div className="p relative">
     <Router>
@@ -27,7 +17,6 @@ requestAnimationFrame(raf);
       <Routes>
         <Route path="/" element={<HomeMainPage />} />
          <Route path="/auth/callback" element={<AuthCallback />} />
-         {/* <Route path="/showRepo" element={<AuthCallback />} /> */}
         <Route path="/select-repo" element={<SelectRepo />} />
         <Route path="/select-files" element={<SelectFiles />} />
       </Routes>

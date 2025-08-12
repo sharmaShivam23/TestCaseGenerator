@@ -171,19 +171,19 @@ export default function SelectFiles() {
 
         {/* Right: Summaries */}
         <div className="flex-1 p-4 bg-white/10 backdrop-blur-md rounded-xl border border-violet-500/30 space-y-4 overflow-y-auto max-h-[70vh] custom-scrollbar">
-        {/* {loadingSummary ? <Loader/> : ( */}
+        {loadingSummary ? <Loader/> : (
           <button
             onClick={generateTestCases}
             className="px-6 py-3 cursor-pointer rounded-lg font-semibold text-white bg-gradient-to-r from-violet-500 to-purple-600 shadow-lg hover:shadow-[0_0_15px_rgba(139,92,246,0.8)] transition-all duration-300"
           >
             🚀 Generate Summaries
           </button>
-          {/* // )} */}
+          )}
 
           {summaries.length == 0 &&  <div className="text-center text-white/80 mt-10 p-6 bg-white/10 backdrop-blur-md rounded-xl border border-violet-500/40">
     <p className="text-lg font-semibold">⚠ No Summary found</p>
     <p className="text-sm text-white/60 mt-1">
-      Please select the repository and click on generate summary.
+      Please select the file and click on generate summary.
     </p>
   </div>}
 
@@ -198,8 +198,7 @@ export default function SelectFiles() {
               <FaCopy className="text-xl"/>
               </h3>
               </div>
-              {loadingSummary ? <Loader/> : (
-              summaries.map((item, i) => (
+              {summaries.map((item, i) => (
                 <div
                 ref={paragraphRef}
                   key={i}
@@ -207,17 +206,16 @@ export default function SelectFiles() {
                 >
                   <h4 className="font-semibold text-violet-300">{item.file}</h4>
                   <p className="text-white/80 mt-1">{item.summary}</p>
-                  {/* {loadingTestCase ? <Loader/> : ( */}
+                  {loadingTestCase ? <Loader/> : (
                   <button
                     onClick={() => generateTest(item.summary)}
                     className="mt-3 px-4 cursor-pointer py-2 rounded-lg bg-gradient-to-r from-purple-600 to-violet-500 text-white text-sm hover:shadow-[0_0_12px_rgba(139,92,246,0.8)] transition-all duration-300"
                   >
                     🧪 Generate Test Code
                   </button>
-                  {/* // )}/ */}
+                  )}
                 </div>
-              ))
-              )}
+              ))}
             </>
           )}
         </div>
@@ -249,11 +247,9 @@ export default function SelectFiles() {
           </h3>
           </div>
           </div>
-          {loadingTestCase ? <Loader/> : (
           <pre  ref={paragraphRef2} className="bg-black/50 text-white p-3 rounded-lg overflow-x-auto whitespace-pre-wrap">
             {testCode}
           </pre>
-          )}
         </div>
       )}
 
