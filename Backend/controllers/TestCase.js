@@ -191,7 +191,6 @@ exports.generateTestCase = async (req, res) => {
 //   }
 // };
 
-
 exports.createPR = async (req, res) => {
   try {
     const { repo, filePath, content, prTitle } = req.body;
@@ -210,21 +209,21 @@ exports.createPR = async (req, res) => {
 
     const [owner, repoName] = repo.split("/");
 
-    // Step 0: Get the repo's default branch
+    // Step 0: Get repo's default branch
     const repoInfo = await axios.get(
       `https://api.github.com/repos/${owner}/${repoName}`,
-      { headers: { Authorization: `token ${githubToken}` } }
+      { headers: { Authorization: `Bearer ${githubToken}` } }
     );
     const baseBranch = repoInfo.data.default_branch;
 
-    // Step 1: Get the base branch's latest commit SHA
+    // Step 1: Get base branch's latest commit SHA
     const baseBranchData = await axios.get(
-      `https://api.github.com/repos/${owner}/${repoName}/git/ref/heads/${baseBranch}`,
-      { headers: { Authorization: `token ${githubToken}` } }
+      `https://api.github.com/repos/${owner}/${repoName}/git/refs/heads/${baseBranch}`,
+      { headers: { Authorization: `Bearer ${githubToken}` } }
     );
     const latestCommitSha = baseBranchData.data.object.sha;
 
-    // Step 2: Create a new branch from base branch
+    // Step 2: Create new branch
     const branchName = `test-case-${Date.now()}`;
     await axios.post(
       `https://api.github.com/repos/${owner}/${repoName}/git/refs`,
@@ -232,22 +231,22 @@ exports.createPR = async (req, res) => {
         ref: `refs/heads/${branchName}`,
         sha: latestCommitSha
       },
-      { headers: { Authorization: `token ${githubToken}` } }
+      { headers: { Authorization: `Bearer ${githubToken}` } }
     );
 
-    // Step 3: Check if the file already exists in base branch
+    // Step 3: Check if file exists
     let blobSha = null;
     try {
       const fileData = await axios.get(
         `https://api.github.com/repos/${owner}/${repoName}/contents/${filePath}?ref=${baseBranch}`,
-        { headers: { Authorization: `token ${githubToken}` } }
+        { headers: { Authorization: `Bearer ${githubToken}` } }
       );
       blobSha = fileData.data.sha;
-    } catch (err) {
+    } catch {
       console.warn(`File not found in base branch (${baseBranch}): Creating new file`);
     }
 
-    // Step 4: Commit file changes to the new branch
+    // Step 4: Commit file to new branch
     await axios.put(
       `https://api.github.com/repos/${owner}/${repoName}/contents/${filePath}`,
       {
@@ -256,10 +255,10 @@ exports.createPR = async (req, res) => {
         branch: branchName,
         sha: blobSha || undefined
       },
-      { headers: { Authorization: `token ${githubToken}` } }
+      { headers: { Authorization: `Bearer ${githubToken}` } }
     );
 
-    // Step 5: Create the pull request
+    // Step 5: Create PR
     const prData = await axios.post(
       `https://api.github.com/repos/${owner}/${repoName}/pulls`,
       {
@@ -268,13 +267,14 @@ exports.createPR = async (req, res) => {
         base: baseBranch,
         body: "This PR contains auto-generated test cases."
       },
-      { headers: { Authorization: `token ${githubToken}` } }
+      { headers: { Authorization: `Bearer ${githubToken}` } }
     );
 
     res.json({
       message: "PR created successfully",
       url: prData.data.html_url
     });
+
   } catch (error) {
     console.error("GitHub API Error:", error.response?.data || error.message);
     res.status(500).json({

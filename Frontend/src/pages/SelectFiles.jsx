@@ -121,10 +121,9 @@ export default function SelectFiles() {
 
     setLoadingPush(true);
     try {
-      const branchName = `test-case-${Date.now()}`;
+      // const branchName = `test-case-${Date.now()}`;
       const res = {
         repo : repo,
-        branch : branchName,
         filePath: selectedFiles[0],
         content: testCode,
         prTitle: "Add generated test cases",
