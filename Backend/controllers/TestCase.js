@@ -96,18 +96,6 @@ exports.generateSummary = async (req, res) => {
 };
 
 
-// exports.generateSummary = async (req, res) => {
-//   const { files } = req.body;
-//   if (!files || !Array.isArray(files) || files.length === 0) return res.status(400).json({ message: 'Files array is required' });
-
-//   try {
-//     const summaries = await generateTestCaseSummaries(files);
-//     res.json({ summaries });
-//   } catch (err) {
-//     console.error('Failed to generate summaries:', err.message);
-//     res.status(500).json({ message: 'Failed to generate summaries' });
-//   }
-// };
 
 exports.generateTestCase = async (req, res) => {
   const { summary } = req.body;
@@ -121,84 +109,171 @@ exports.generateTestCase = async (req, res) => {
   }
 };
 
+// exports.createPR = async (req, res) => {
+//   const { repo, baseBranch = 'main', filePath, content, prTitle } = req.body;
+//   if (!repo || !repo.includes('/')) return res.status(400).json({ message: 'Invalid repo' });
+//   if (!filePath || !content) return res.status(400).json({ message: 'filePath and content required' });
+
+//   const [owner, repoName] = repo.split('/');
+//   try {
+//     const token = decrypt(req.user.githubAccessToken);
+//     const octokit = new Octokit({ auth: token, userAgent: APP_NAME });
+
+//     // get base branch ref SHA
+//     const baseRef = `heads/${baseBranch}`;
+//     const { data: refData } = await octokit.git.getRef({ owner, repo: repoName, ref: baseRef });
+//     const baseSha = refData.object.sha;
+
+//     // create new branch
+//     const newBranch = `test-cases-${Date.now()}`;
+//     await octokit.git.createRef({
+//       owner,
+//       repo: repoName,
+//       ref: `refs/heads/${newBranch}`,
+//       sha: baseSha,
+//     });
+
+//     // check if file exists on base branch
+//     let exists = false;
+//     let existingSha = null;
+//     try {
+//       const getRes = await octokit.repos.getContent({ owner, repo: repoName, path: filePath, ref: baseBranch });
+//       if (getRes && getRes.data && getRes.data.sha) {
+//         exists = true;
+//         existingSha = getRes.data.sha;
+//       }
+//     } catch (e) {
+//       // file doesn't exist => create
+//       exists = false;
+//     }
+
+//     if (exists) {
+//       // update
+//       await octokit.repos.createOrUpdateFileContents({
+//         owner,
+//         repo: repoName,
+//         path: filePath,
+//         message: prTitle || 'Update generated test cases',
+//         content: Buffer.from(content).toString('base64'),
+//         branch: newBranch,
+//         sha: existingSha,
+//       });
+//     } else {
+//       // create
+//       await octokit.repos.createOrUpdateFileContents({
+//         owner,
+//         repo: repoName,
+//         path: filePath,
+//         message: prTitle || 'Add generated test cases',
+//         content: Buffer.from(content).toString('base64'),
+//         branch: newBranch,
+//       });
+//     }
+
+//     // create PR
+//     const { data: pr } = await octokit.pulls.create({
+//       owner,
+//       repo: repoName,
+//       title: prTitle || 'Add generated test cases',
+//       head: newBranch,
+//       base: baseBranch,
+//       body: 'Auto-generated test cases by TestGen'
+//     });
+
+//     res.json({ prUrl: pr.html_url });
+//   } catch (err) {
+//     console.error('Failed to create PR:', err.response?.data || err.message);
+//     const status = err.status || 500;
+//     if (err.response?.status === 403 && String(err.response?.data)?.includes('rate limit')) {
+//       return res.status(429).json({ message: 'GitHub API rate limit exceeded' });
+//     }
+//     res.status(status).json({ message: 'Failed to create PR' });
+//   }
+// };
+
+
+
 exports.createPR = async (req, res) => {
-  const { repo, baseBranch = 'main', filePath, content, prTitle } = req.body;
-  if (!repo || !repo.includes('/')) return res.status(400).json({ message: 'Invalid repo' });
-  if (!filePath || !content) return res.status(400).json({ message: 'filePath and content required' });
-
-  const [owner, repoName] = repo.split('/');
   try {
-    const token = decrypt(req.user.githubAccessToken);
-    const octokit = new Octokit({ auth: token, userAgent: APP_NAME });
+    const { repo, baseBranch = "main", filePath, content, prTitle } = req.body;
 
-    // get base branch ref SHA
-    const baseRef = `heads/${baseBranch}`;
-    const { data: refData } = await octokit.git.getRef({ owner, repo: repoName, ref: baseRef });
-    const baseSha = refData.object.sha;
+    if (!repo || !repo.includes("/")) {
+      return res.status(400).json({ message: "Invalid repo format. Use 'owner/repo'." });
+    }
+    if (!filePath || !content) {
+      return res.status(400).json({ message: "filePath and content are required" });
+    }
 
-    // create new branch
-    const newBranch = `test-cases-${Date.now()}`;
-    await octokit.git.createRef({
-      owner,
-      repo: repoName,
-      ref: `refs/heads/${newBranch}`,
-      sha: baseSha,
-    });
+    const githubToken = process.env.GITHUB_TOKEN;
+    if (!githubToken) {
+      return res.status(500).json({ message: "GitHub token not configured" });
+    }
 
-    // check if file exists on base branch
-    let exists = false;
-    let existingSha = null;
+    const [owner, repoName] = repo.split("/");
+
+    // Step 1: Get the base branch's latest commit SHA
+    const baseBranchData = await axios.get(
+      `https://api.github.com/repos/${owner}/${repoName}/git/ref/heads/${baseBranch}`,
+      { headers: { Authorization: `token ${githubToken}` } }
+    );
+    const latestCommitSha = baseBranchData.data.object.sha;
+
+    // Step 2: Create a new branch
+    const branchName = `test-case-${Date.now()}`;
+    await axios.post(
+      `https://api.github.com/repos/${owner}/${repoName}/git/refs`,
+      {
+        ref: `refs/heads/${branchName}`,
+        sha: latestCommitSha
+      },
+      { headers: { Authorization: `token ${githubToken}` } }
+    );
+
+    // Step 3: Get the blob SHA of the file (if it exists)
+    let blobSha = null;
     try {
-      const getRes = await octokit.repos.getContent({ owner, repo: repoName, path: filePath, ref: baseBranch });
-      if (getRes && getRes.data && getRes.data.sha) {
-        exists = true;
-        existingSha = getRes.data.sha;
-      }
-    } catch (e) {
-      // file doesn't exist => create
-      exists = false;
+      const fileData = await axios.get(
+        `https://api.github.com/repos/${owner}/${repoName}/contents/${filePath}?ref=${baseBranch}`,
+        { headers: { Authorization: `token ${githubToken}` } }
+      );
+      blobSha = fileData.data.sha;
+    } catch (err) {
+      console.warn("File not found, creating a new one:", filePath);
     }
 
-    if (exists) {
-      // update
-      await octokit.repos.createOrUpdateFileContents({
-        owner,
-        repo: repoName,
-        path: filePath,
-        message: prTitle || 'Update generated test cases',
-        content: Buffer.from(content).toString('base64'),
-        branch: newBranch,
-        sha: existingSha,
-      });
-    } else {
-      // create
-      await octokit.repos.createOrUpdateFileContents({
-        owner,
-        repo: repoName,
-        path: filePath,
-        message: prTitle || 'Add generated test cases',
-        content: Buffer.from(content).toString('base64'),
-        branch: newBranch,
-      });
-    }
+    // Step 4: Commit the file to the new branch
+    await axios.put(
+      `https://api.github.com/repos/${owner}/${repoName}/contents/${filePath}`,
+      {
+        message: prTitle || "Add generated test case",
+        content: Buffer.from(content).toString("base64"),
+        branch: branchName,
+        sha: blobSha || undefined
+      },
+      { headers: { Authorization: `token ${githubToken}` } }
+    );
 
-    // create PR
-    const { data: pr } = await octokit.pulls.create({
-      owner,
-      repo: repoName,
-      title: prTitle || 'Add generated test cases',
-      head: newBranch,
-      base: baseBranch,
-      body: 'Auto-generated test cases by TestGen'
+    // Step 5: Create the pull request
+    const prData = await axios.post(
+      `https://api.github.com/repos/${owner}/${repoName}/pulls`,
+      {
+        title: prTitle || "Generated test cases",
+        head: branchName,
+        base: baseBranch,
+        body: "This PR contains auto-generated test cases."
+      },
+      { headers: { Authorization: `token ${githubToken}` } }
+    );
+
+    res.json({
+      message: "PR created successfully",
+      url: prData.data.html_url
     });
-
-    res.json({ prUrl: pr.html_url });
-  } catch (err) {
-    console.error('Failed to create PR:', err.response?.data || err.message);
-    const status = err.status || 500;
-    if (err.response?.status === 403 && String(err.response?.data)?.includes('rate limit')) {
-      return res.status(429).json({ message: 'GitHub API rate limit exceeded' });
-    }
-    res.status(status).json({ message: 'Failed to create PR' });
+  } catch (error) {
+    console.error("GitHub API Error:", error.response?.data || error.message);
+    res.status(500).json({
+      message: "Failed to create PR",
+      error: error.response?.data || error.message
+    });
   }
 };

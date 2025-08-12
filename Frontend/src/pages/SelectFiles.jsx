@@ -117,17 +117,28 @@ export default function SelectFiles() {
   }
   setLoadingPush(true);
   try {
-    const branchName = `test-code-${Date.now()}`;
+    // const branchName = `test-code-${Date.now()}`;
     const commitMessage = "Add generated test code";
 
-   const r =  await API.post("/create-pr", {
-      repo,
-      branchName : "GittestPulse",
-      filePath: selectedFiles[0], 
-      content: testCode,
-      commitMessage :  "Add generated test cases"
-    });
-    console.log(r);
+  //  const r =  await API.post("/create-pr", {
+  //     repo,
+  //     // branchName : "GittestPulse",
+  //     filePath: selectedFiles[0], 
+  //     content: testCode,
+  //     prTitle : "Add generated test cases"
+  //     // commitMessage :  "Add generated test cases"
+  //   });
+  //   console.log(r);
+  const branchName = `test-case-${Date.now()}`;
+await API.post("/create-pr", {
+  repo,
+  branchName,
+  filePath: selectedFiles[0],
+  content: testCode,
+  prTitle: "Add generated test cases"
+});
+// toast.success(`Pull request created for branch ${branchName}`);
+
     
 
     toast.success(`Pull request created for branch ${branchName}`);
