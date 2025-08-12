@@ -191,7 +191,6 @@ exports.generateTestCase = async (req, res) => {
 //   }
 // };
 
-const axios = require("axios");
 
 exports.createPR = async (req, res) => {
   try {
