@@ -120,12 +120,12 @@ export default function SelectFiles() {
     const branchName = `test-code-${Date.now()}`;
     const commitMessage = "Add generated test code";
 
-   const r=  await API.post("/create-pr", {
+   const r =  await API.post("/create-pr", {
       repo,
-      branchName,
+      branchName : "GittestPulse",
       filePath: selectedFiles[0], 
       content: testCode,
-      commitMessage
+      commitMessage :  "Add generated test cases"
     });
     console.log(r);
     
