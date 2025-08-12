@@ -63,18 +63,51 @@ exports.getRepoFiles = async (req, res) => {
   }
 };
 
+
+async function fetchFileContent(repo, path) {
+  const res = await axios.get(`https://api.github.com/repos/${repo}/contents/${path}`, {
+    headers: { Authorization: `token ${process.env.GITHUB_TOKEN}` }
+  });
+
+  return {
+    name: res.data.name,
+    content: Buffer.from(res.data.content, "base64").toString("utf-8")
+  };
+}
+
 exports.generateSummary = async (req, res) => {
-  const { files } = req.body;
-  if (!files || !Array.isArray(files) || files.length === 0) return res.status(400).json({ message: 'Files array is required' });
+  const { repo, files } = req.body;
+
+  if (!files || !Array.isArray(files) || files.length === 0) {
+    return res.status(400).json({ message: "Files array is required" });
+  }
 
   try {
-    const summaries = await generateTestCaseSummaries(files);
+    // Fetch real file contents from GitHub
+    const fileObjs = await Promise.all(files.map(path => fetchFileContent(repo, path)));
+
+    // Now pass proper objects to Gemini
+    const summaries = await generateTestCaseSummaries(fileObjs);
     res.json({ summaries });
   } catch (err) {
-    console.error('Failed to generate summaries:', err.message);
-    res.status(500).json({ message: 'Failed to generate summaries' });
+    console.error("Failed to generate summaries:", err.message);
+    res.status(500).json({ message: "Failed to generate summaries" });
   }
 };
+
+
+// exports.generateSummary = async (req, res) => {
+//   const { files } = req.body;
+//   if (!files || !Array.isArray(files) || files.length === 0) return res.status(400).json({ message: 'Files array is required' });
+
+//   try {
+//     const summaries = await generateTestCaseSummaries(files);
+//     res.json({ summaries });
+//   } catch (err) {
+//     console.error('Failed to generate summaries:', err.message);
+//     res.status(500).json({ message: 'Failed to generate summaries' });
+//   }
+// };
 
 exports.generateTestCase = async (req, res) => {
   const { summary } = req.body;

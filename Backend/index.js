@@ -7,14 +7,13 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const mongoSanitize = require('express-mongo-sanitize');
 const compression = require('compression');
-
 const database = require('./config/database');
 const routes = require('./routes/Routes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-database(); // connect mongo
+database();
 
 app.use(
   cors({
