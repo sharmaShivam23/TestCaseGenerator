@@ -28,7 +28,7 @@ const Navbar = () => {
         <ul className='flex  max-[1200px]:hidden  justify-evenly items-center gap-8'>
           <li className='cursor-pointer hover:text-violet-600 transition-all ease-out duration-500' onClick={() => handleScroll("working")}>Working</li>
           <li className='cursor-pointer hover:text-violet-600 transition-all ease-out duration-500' onClick={() => handleScroll("about")}>About</li>
-          <li className='cursor-pointer hover:text-violet-600 transition-all ease-out duration-500' onClick={() => handleScroll("work")}>Testimonials</li>
+          <li className='cursor-pointer hover:text-violet-600 transition-all ease-out duration-500' onClick={() => handleScroll("testimonials")}>Testimonials</li>
         </ul>
       </div>
       <div className="btns max-[800px]:hidden flex justify-evenly  gap-8">

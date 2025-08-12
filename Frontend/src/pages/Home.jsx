@@ -8,7 +8,18 @@ import Contact from './Contact'
 import Testimonials from '../components/HomepageCores/Testimonials'
 import Working from './Working'
 import ScrollTop from './ScrollTop'
+import Lenis from 'lenis'
 const Home = () => {
+  
+const lenis = new Lenis();
+
+// Use requestAnimationFrame to continuously update the scroll
+function raf(time) {
+  lenis.raf(time);
+  requestAnimationFrame(raf);
+}
+
+requestAnimationFrame(raf);
   return (
    <>
     <div className='relative max-[770px]:h-[120vh] overflow-x-hidden max-[570px]:h-[130vh] min-h-screen h-auto '>

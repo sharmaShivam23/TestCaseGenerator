@@ -3,7 +3,7 @@ import testimonials from '../Data/TestimonialData';
 import { motion } from 'framer-motion';
 const Testimonials = () => {
   return (
-    <div className=" bg-[linear-gradient(to_bottom,_#000_50%,_#460F9E_100%)] pb-10 flex-col text-white justify-center items-center flex min-h-screen overflow-hidden px-8 md:px-20">
+    <div id="testimonials" className=" bg-[linear-gradient(to_bottom,_#000_50%,_#460F9E_100%)] pb-10 flex-col text-white justify-center items-center flex min-h-screen overflow-hidden px-8 md:px-20">
       
       {/* Heading */}
       <div className="mt-10 flex text-center flex-col max-w-3xl">

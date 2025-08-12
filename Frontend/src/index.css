@@ -43,3 +43,29 @@ bounce: {
 .bounce2 {
   animation: bounce2 2s infinite;
 }
+
+/* For Chrome, Edge, and Safari */
+::-webkit-scrollbar {
+  width: 10px; /* scrollbar width */
+}
+
+::-webkit-scrollbar-track {
+  background: black; /* light violet background */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #8a2be2; /* violet */
+  border-radius: 10px;
+  border: 2px solid #f4e8ff; /* creates padding effect */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #6a1bbf; /* darker violet on hover */
+}
+
+/* For Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #8a2be2 black;
+}

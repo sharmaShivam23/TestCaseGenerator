@@ -51,7 +51,7 @@ export default function SelectRepo() {
 
        <button
             onClick={() => navigate("/")}
-            className="px-6 py-3 absolute top-4 sm:top-8 left-5 cursor-pointer rounded-lg font-semibold text-white bg-gradient-to-r from-violet-500 to-purple-600 shadow-lg hover:shadow-[0_0_15px_rgba(139,92,246,0.8)] transition-all duration-300"
+            className="px-6 py-3 absolute top-4 sm:top-8 mb-8 left-5 cursor-pointer rounded-lg font-semibold text-white bg-gradient-to-r from-violet-500 to-purple-600 shadow-lg hover:shadow-[0_0_15px_rgba(139,92,246,0.8)] transition-all duration-300"
           >
             🡸 Back
           </button>

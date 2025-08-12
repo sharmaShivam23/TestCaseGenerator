@@ -7,9 +7,19 @@ import SelectRepo from './pages/ShowRepo';
 import SelectFiles from './pages/SelectFiles';
 import Contact from './pages/Contact';
 import ScrollTop from './pages/ScrollTop';
-// import SelectRepo from './pages/ShowRepo';
+import Lenis from 'lenis'
 import Footer from './pages/Footer';
 function App() {
+  
+const lenis = new Lenis();
+
+// Use requestAnimationFrame to continuously update the scroll
+function raf(time) {
+  lenis.raf(time);
+  requestAnimationFrame(raf);
+}
+
+requestAnimationFrame(raf);
   return (
     <div className="p relative">
     <Router>
