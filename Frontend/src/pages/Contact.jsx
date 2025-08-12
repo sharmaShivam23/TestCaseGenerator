@@ -97,20 +97,20 @@ const Contact = () => {
               with our users to make our tools better for everyone.
             </p>
             <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <span className="text-violet-400 text-2xl">📩</span>
+              <li className="flex  items-center gap-3">
+                <span className="text-violet-400 text-2xl">1.</span>
                 <span>Get quick responses from our support team</span>
               </li>
-              <li className="flex items-start gap-3">
-                <span className="text-violet-400 text-2xl">💡</span>
+              <li className="flex items-center gap-3">
+                <span className="text-violet-400 text-2xl">2.</span>
                 <span>Share feedback to improve our product</span>
               </li>
-              <li className="flex items-start gap-3">
-                <span className="text-violet-400 text-2xl">🤝</span>
+              <li className="flex items-center gap-3">
+                <span className="text-violet-400 text-2xl">3.</span>
                 <span>Collaborate on custom solutions tailored to your needs</span>
               </li>
-              <li className="flex items-start gap-3">
-                <span className="text-violet-400 text-2xl">🚀</span>
+              <li className="flex items-center gap-3">
+                <span className="text-violet-400 text-2xl">4.</span>
                 <span>Learn best practices to get the most from our platform</span>
               </li>
             </ul>

@@ -42,7 +42,7 @@ const HomeMainPage = () => {
             <div className="i w-full sm:w-[20vw] flex justify-center items-center font-bold max-w-max px-7 h-[40px] rounded-lg bg-[#1C1E23]">
               Click On the button to Login {" "}  ▶
             </div>
-            <div onClick={handleScroll} className="p z-50 cursor-pointer">
+            <div onClick={handleScroll} className="p z-30 cursor-pointer">
               <VioletBtn text="Get Started" />
             </div>
           </div>
