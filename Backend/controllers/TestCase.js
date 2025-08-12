@@ -195,11 +195,15 @@ exports.createPR = async (req, res) => {
   try {
     const { repo, filePath, content, prTitle } = req.body;
 
-    if (!repo || !repo.includes("/")) {
+    // Validate inputs
+    if (!repo || !/^[^/]+\/[^/]+$/.test(repo)) {
       return res.status(400).json({ message: "Invalid repo format. Use 'owner/repo'." });
     }
-    if (!filePath || !content) {
-      return res.status(400).json({ message: "filePath and content are required" });
+    if (!filePath || typeof filePath !== "string" || filePath.trim() === "") {
+      return res.status(400).json({ message: "filePath is required and must be a string" });
+    }
+    if (!content || typeof content !== "string") {
+      return res.status(400).json({ message: "content is required and must be a string" });
     }
 
     const githubToken = process.env.GITHUB_TOKEN;
@@ -209,21 +213,22 @@ exports.createPR = async (req, res) => {
 
     const [owner, repoName] = repo.split("/");
 
-    // Step 0: Get repo's default branch
+    // Step 0: Get default branch
     const repoInfo = await axios.get(
       `https://api.github.com/repos/${owner}/${repoName}`,
       { headers: { Authorization: `Bearer ${githubToken}` } }
     );
-    const baseBranch = repoInfo.data.default_branch;
+    const baseBranch = "main"
+    // const baseBranch = repoInfo.data.default_branch;
 
-    // Step 1: Get base branch's latest commit SHA
-    const baseBranchData = await axios.get(
-      `https://api.github.com/repos/${owner}/${repoName}/git/refs/heads/${baseBranch}`,
+    // Step 1: Get latest commit SHA from base branch
+    const { data: baseRef } = await axios.get(
+      `https://api.github.com/repos/${owner}/${repoName}/git/ref/heads/${baseBranch}`,
       { headers: { Authorization: `Bearer ${githubToken}` } }
     );
-    const latestCommitSha = baseBranchData.data.object.sha;
+    const latestCommitSha = baseRef.object.sha;
 
-    // Step 2: Create new branch
+    // Step 2: Create a new branch
     const branchName = `test-case-${Date.now()}`;
     await axios.post(
       `https://api.github.com/repos/${owner}/${repoName}/git/refs`,
@@ -234,31 +239,31 @@ exports.createPR = async (req, res) => {
       { headers: { Authorization: `Bearer ${githubToken}` } }
     );
 
-    // Step 3: Check if file exists
+    // Step 3: Check if file exists in base branch
     let blobSha = null;
     try {
       const fileData = await axios.get(
         `https://api.github.com/repos/${owner}/${repoName}/contents/${filePath}?ref=${baseBranch}`,
         { headers: { Authorization: `Bearer ${githubToken}` } }
       );
-      blobSha = fileData.data.sha;
+      blobSha = fileData.data.sha; // Existing file SHA for updates
     } catch {
-      console.warn(`File not found in base branch (${baseBranch}): Creating new file`);
+      console.warn(`File ${filePath} not found in ${baseBranch}, creating new one.`);
     }
 
-    // Step 4: Commit file to new branch
+    // Step 4: Create or update file in new branch
     await axios.put(
       `https://api.github.com/repos/${owner}/${repoName}/contents/${filePath}`,
       {
         message: prTitle || "Add generated test case",
         content: Buffer.from(content).toString("base64"),
         branch: branchName,
-        sha: blobSha || undefined
+        ...(blobSha ? { sha: blobSha } : {}) // only include sha if updating
       },
       { headers: { Authorization: `Bearer ${githubToken}` } }
     );
 
-    // Step 5: Create PR
+    // Step 5: Create a pull request
     const prData = await axios.post(
       `https://api.github.com/repos/${owner}/${repoName}/pulls`,
       {
@@ -270,14 +275,14 @@ exports.createPR = async (req, res) => {
       { headers: { Authorization: `Bearer ${githubToken}` } }
     );
 
-    res.json({
+    return res.json({
       message: "PR created successfully",
       url: prData.data.html_url
     });
 
   } catch (error) {
     console.error("GitHub API Error:", error.response?.data || error.message);
-    res.status(500).json({
+    return res.status(500).json({
       message: "Failed to create PR",
       error: error.response?.data || error.message
     });
