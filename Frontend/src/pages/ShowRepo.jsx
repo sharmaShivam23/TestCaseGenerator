@@ -16,8 +16,7 @@ export default function SelectRepo() {
     const fetchRepos = async () => {
       try {
         const response = await API.get("/repos");
-        console.log(response);
-        
+        // console.log(response);
         setRepos(response?.data || []);
         if (response?.status === 200) {
           toast.success("Getting All Repositories Successfully");
@@ -77,7 +76,7 @@ export default function SelectRepo() {
 
         
         {/* Scrollable repo list */}
-        <div className="max-h-[65vh] overflow-y-auto space-y-4 pr-2 custom-scrollbar">
+        <div data-lenis-prevent className="max-h-[65vh] overflow-y-auto space-y-4 pr-2 custom-scrollbar">
           {loading ? <Loader/> : (
           repos.length > 0 ? (
             repos.map((repo) => (

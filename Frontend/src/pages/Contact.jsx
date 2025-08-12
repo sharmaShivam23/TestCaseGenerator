@@ -15,7 +15,7 @@ const Contact = () => {
     contact: "",
     message: "",
   });
-  const recaptchaRef = useRef(null); // ✅ Fixed ref name
+  const recaptchaRef = useRef(null); 
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {

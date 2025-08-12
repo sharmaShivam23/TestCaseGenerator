@@ -140,7 +140,7 @@ export default function SelectFiles() {
 
       <div className="flex md:flex-row flex-col w-full max-w-7xl gap-6">
         {/* Left: File List */}
-        <div className="md:w-1/3 w-full  max-h-[70vh] overflow-y-auto space-y-3 p-4 bg-white/10 backdrop-blur-md rounded-xl border border-violet-500/30 custom-scrollbar">
+        <div data-lenis-prevent className="md:w-1/3 w-full  max-h-[70vh] overflow-y-auto space-y-3 p-4 bg-white/10 backdrop-blur-md rounded-xl border border-violet-500/30 custom-scrollbar">
        {loading ? (
   <Loader />
 ) : files.length === 0 ? (
@@ -170,7 +170,7 @@ export default function SelectFiles() {
         </div>
 
         {/* Right: Summaries */}
-        <div className="flex-1 p-4 bg-white/10 backdrop-blur-md rounded-xl border border-violet-500/30 space-y-4 overflow-y-auto max-h-[70vh] custom-scrollbar">
+        <div data-lenis-prevent className="flex-1 p-4 bg-white/10 backdrop-blur-md rounded-xl border border-violet-500/30 space-y-4 overflow-y-auto max-h-[70vh] custom-scrollbar">
         {loadingSummary ? <Loader/> : (
           <button
             onClick={generateTestCases}
@@ -230,7 +230,7 @@ export default function SelectFiles() {
   </div>}
       {/* Test Code Output */}
       {testCode && (
-        <div className={`mt-6 w-full ${expand ? "h-auto" : "h-[50vh] overflow-y-scroll"} custom-scrollbar  max-w-7xl bg-black/40 backdrop-blur-md p-4 rounded-xl border border-violet-500/30`}>
+        <div data-lenis-prevent className={`mt-6 w-full ${expand ? "h-auto" : "h-[50vh] overflow-y-scroll"} custom-scrollbar  max-w-7xl bg-black/40 backdrop-blur-md p-4 rounded-xl border border-violet-500/30`}>
         <div className="h flex w-full justify-between">
           <h3 className="text-xl font-bold text-violet-300 mb-2">
             Generated Test Code:
