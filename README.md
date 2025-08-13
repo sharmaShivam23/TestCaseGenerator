@@ -1,1 +1,112 @@
 
+[README (1).md](https://github.com/user-attachments/files/21747365/README.1.md)
+
+## Project Name
+GitTestPulse :  A modern web application that integrates with GitHub to analyze your codebase and generate automated test cases using AI. Supports multiple testing frameworks and enables seamless creation of pull requests with generated test code on GitHub.
+## Features
+1. GitHub Integration:
+Authenticate via GitHub OAuth and browse your repositories and code files directly in the UI.
+
+2. Multi-File Test Case Generation:
+Select multiple files and send them to the AI backend to generate grouped test case summaries.
+
+3. Test Case Summaries & Code Generation:
+View a list of AI-generated test case summaries. Select any summary to generate the detailed test case code snippet.
+
+4. Support for Multiple Testing Frameworks:
+AI generates test cases in various frameworks (e.g., JUnit for JavaScript/React, Selenium for Python automation).
+
+5. Pull Request Automation (Bonus):
+Easily create a pull request on GitHub with the generated test case code pushed to a new branch.
+
+6. Clean & Responsive UI:
+Built with React and Tailwind CSS, providing a modern, intuitive user experience.
+
+
+## Technologies Used
+Frontend: React, Tailwind CSS
+
+Backend: Node.js, Express.js
+
+Database: MongoDB
+
+GitHub API: For repository browsing and PR creation
+
+AI: Integration with an AI model to generate test cases (e.g., OpenAI API)
+
+Authentication: GitHub OAuth for user login
+## Prerequisites
+Node.js (v16 or later recommended)
+
+MongoDB instance (local or cloud)
+
+GitHub OAuth app credentials
+
+OpenAI API key or relevant AI service credentials
+## Installation
+
+Install my-project with npm
+ 
+ Clone the repository:
+
+```bash
+ git clone https://github.com/sharmaShivam23/TestCaseGenerator.git
+ cd TestCaseGenerator
+```
+    
+  Setup backend environment:
+  ```bash
+PORT = 5000
+MONGO_URI =  your mongo url
+NODE_ENV=production
+COOKIE_SECRET= your SECRET_KEY
+SESSION_SECRET= your SESSION_SECRET
+GITHUB_CLIENT_ID = your GITHUB_CLIENT_ID
+GITHUB_CLIENT_SECRET = your GITHUB_CLIENT_SECRET
+JWT_SECRET = yoyr JWT_SECRET
+ENCRYPTION_PASSPHRASE= your ENCRYPTION_PASSPHRASE
+APP_NAME= your APP_NAME
+BASE_URL= http://localhost:5000
+FRONTEND_URL=http://localhost:5173 or your FRONTEND_URL
+GEMINI_API_KEY = your GEMINI_API_KEY
+CAPTCHA_KEY = your invisible v2 CAPTCHA_KEY
+GITHUB_TOKEN = your GITHUB_TOKEN
+  ```
+
+Install backend dependencies and start server:
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+Setup frontend environment:
+```bash
+cd ../frontend
+npm install
+npm start
+
+```
+
+## Usage
+Login with GitHub to authorize and access your repositories.
+
+It Will automatically shows your all repos in UI.
+
+Select a repository, pick the files you want, and let the app generate detailed test summaries and test cases for them.
+
+AI will provide a list of test case summaries based on selected files.
+
+Click on any summary to generate full test case code.
+
+Optionally, click "Create Pull Request" to push generated test code back to GitHub.
+## Screenshots
+
+![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+
+
+## Support
+
+For support, email sgivamsharma06@gmail.com.
+Shivam Sharma
+
