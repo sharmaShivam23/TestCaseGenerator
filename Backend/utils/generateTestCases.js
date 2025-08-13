@@ -11,38 +11,46 @@ exports.generateTestCaseSummaries = async (files) => {
             // contents: [{
             //   parts: [{ text: `Generate a concise test-case summary for this code:\n\n${file.content}` }]
             // }]
-            contents: [
-              {
-                parts: [
-                  {
-                    text: `
+           contents: [
+  {
+    parts: [
+      {
+        text: `
 You are a professional QA engineer.
-Analyze the following code and produce a **well-structured, concise test-case summary**.
+Analyze the following code and produce a clear, bullet-point test-case summary.
 
-Follow exactly this Markdown format:
+Formatting rules:
+- Use Markdown.
+- Each section heading (### or ####) must be on its own line ans use green color for it.
+- Each bullet point must start with "- " on a new line (never inline after a heading) use blue color for it.
+- No extra text before or after the summary.
+
+Use differnet colors to highlights the only important points like chatgpt
+
+Format example:
 
 ### Test Case Summary
+
 #### Positive Cases
-- Point 1
-- Point 2
+- First positive case
+- Second positive case
 
 #### Edge Cases
-- Point 1
-- Point 2
+- First edge case
+- Second edge case
 
 #### Negative Cases
-- Point 1
-- Point 2
+- First negative case
+- Second negative case
 
-Use short, clear bullet points. Do not include explanations or extra text before or after the summary.
-
-Here is the code:
+Code:
 ${file.content}
-    `,
-                  },
-                ],
-              },
-            ],
+        `
+      }
+    ]
+  }
+]
+
           },
           { headers: { "Content-Type": "application/json" } }
         )
@@ -85,13 +93,14 @@ You are a senior software engineer.
 Using the following **test case summary**, generate complete unit test code.
 
 Requirements:
-- Detect the programming language from the code context in the summary.
+- Detect the programming language from the code context in the summary with yellow color.
 - Use the most common testing framework for that language (e.g., Jest for JavaScript, Pytest for Python, JUnit for Java, unittest for C#, etc.).
 - Include necessary imports or setup for the chosen framework.
 - Follow the Arrange–Act–Assert (AAA) pattern.
 - Use descriptive test suite and test case names based on the summary.
 - Output ONLY one fenced code block with the correct language tag (e.g., \`\`\`python, \`\`\`java).
 - Do NOT add any explanations, comments, or text outside the code block.
+- Use different colors to highlights only important points like chatgpt
 
 Test Case Summary:
 ${summary}
