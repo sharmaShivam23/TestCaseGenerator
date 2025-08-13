@@ -42,27 +42,9 @@ MongoDB instance (local or cloud)
 
 GitHub OAuth app credentials
 
+
 ## Project Structure
-
-TestCaseGenerator/
-├── Backend/ # Node.js Express server 
-│ ├── controllers/
-│ ├── model/
-│ ├── routes/
-│ ├── config/ 
-│ ├── utils/
-│ └── index.js 
-├── Frontend/ # React + Tailwind app 
-│ ├── src/
-│ │ ├── components/
-│ │ ├── pages/
-│ │ ├── reducer/ 
-│ │ ├── api.js/ 
-│ │ └── App.jsx
-│ └── tailwind.config.js
-├── README.md
-└── package.json
-
+<img width="323" height="458" alt="Screenshot 2025-08-13 110104" src="https://github.com/user-attachments/assets/49180c53-e95c-4e30-a1a2-dad18ed957f2" />
 
 
 ## Installation
