@@ -1,7 +1,7 @@
 
 [README (1).md](https://github.com/user-attachments/files/21747365/README.1.md)
 
-## Project Name
+##  Project Title and description
 GitTestPulse :  A modern web application that integrates with GitHub to analyze your codebase and generate automated test cases using AI. Supports multiple testing frameworks and enables seamless creation of pull requests with generated test code on GitHub.
 ## Features
 1. GitHub Integration:
