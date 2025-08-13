@@ -21,11 +21,10 @@ Analyze the following code and produce a clear, bullet-point test-case summary.
 
 Formatting rules:
 - Use Markdown.
-- Each section heading (### or ####) must be on its own line ans use green color for it.
-- Each bullet point must start with "- " on a new line (never inline after a heading) use blue color for it.
+- Each section heading (### or ####) must be on its own line.
+- Each bullet point must start with "- " on a new line (never inline after a heading).
 - No extra text before or after the summary.
 
-Use differnet colors to highlights the only important points like chatgpt
 
 Format example:
 
@@ -100,7 +99,6 @@ Requirements:
 - Use descriptive test suite and test case names based on the summary.
 - Output ONLY one fenced code block with the correct language tag (e.g., \`\`\`python, \`\`\`java).
 - Do NOT add any explanations, comments, or text outside the code block.
-- Use different colors to highlights only important points like chatgpt
 
 Test Case Summary:
 ${summary}
