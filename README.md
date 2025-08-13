@@ -42,7 +42,29 @@ MongoDB instance (local or cloud)
 
 GitHub OAuth app credentials
 
-OpenAI API key or relevant AI service credentials
+## Project Structure
+
+TestCaseGenerator/
+├── Backend/ # Node.js Express server 
+│ ├── controllers/
+│ ├── model/
+│ ├── routes/
+│ ├── config/ 
+│ ├── utils/
+│ └── index.js 
+├── Frontend/ # React + Tailwind app 
+│ ├── src/
+│ │ ├── components/
+│ │ ├── pages/
+│ │ ├── reducer/ 
+│ │ ├── api.js/ 
+│ │ └── App.jsx
+│ └── tailwind.config.js
+├── README.md
+└── package.json
+
+
+
 ## Installation
 
 Install my-project with npm
