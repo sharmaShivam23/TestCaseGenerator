@@ -16,7 +16,7 @@ View a list of AI-generated test case summaries. Select any summary to generate 
 4. Support for Multiple Testing Frameworks:
 AI generates test cases in various frameworks (e.g., JUnit for JavaScript/React, Selenium for Python automation).
 
-5. Pull Request Automation (Bonus):
+5. Pull Request Automation:
 Easily create a pull request on GitHub with the generated test case code pushed to a new branch.
 
 6. Clean & Responsive UI:
@@ -32,7 +32,7 @@ Database: MongoDB
 
 GitHub API: For repository browsing and PR creation
 
-AI: Integration with an AI model to generate test cases (e.g., OpenAI API)
+AI: Integration with an AI model to generate test cases 
 
 Authentication: GitHub OAuth for user login
 ## Prerequisites
@@ -73,6 +73,15 @@ CAPTCHA_KEY = your invisible v2 CAPTCHA_KEY
 GITHUB_TOKEN = your GITHUB_TOKEN
   ```
 
+
+  Setup backend environment:
+  ```bash
+VITE_API_BASE_URL = "API url"
+VITE_API_CAPTCHA_KEY = "your recaptcha key"
+
+
+  ```
+
 Install backend dependencies and start server:
 ```bash
 cd backend
@@ -84,7 +93,7 @@ Setup frontend environment:
 ```bash
 cd ../frontend
 npm install
-npm start
+npm run dev
 
 ```
 
@@ -99,7 +108,7 @@ AI will provide a list of test case summaries based on selected files.
 
 Click on any summary to generate full test case code.
 
-Optionally, click "Create Pull Request" to push generated test code back to GitHub.
+click "Create Pull Request" to push generated test code back to GitHub.
 ## Screenshots
 Home Page : -
 <img width="1905" height="863" alt="Screenshot 2025-08-13 103706" src="https://github.com/user-attachments/assets/f30bb4c9-7dd8-49de-aa41-f804c7a4ce21" />
