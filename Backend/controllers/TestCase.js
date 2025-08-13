@@ -218,8 +218,8 @@ exports.createPR = async (req, res) => {
       `https://api.github.com/repos/${owner}/${repoName}`,
       { headers: { Authorization: `Bearer ${githubToken}` } }
     );
-    const baseBranch = "main"
-    // const baseBranch = repoInfo.data.default_branch;
+    // const baseBranch = "main"
+    const baseBranch = repoInfo.data.default_branch;
 
     // Step 1: Get latest commit SHA from base branch
     const { data: baseRef } = await axios.get(
@@ -229,7 +229,8 @@ exports.createPR = async (req, res) => {
     const latestCommitSha = baseRef.object.sha;
 
     // Step 2: Create a new branch
-    const branchName = `test-case-${Date.now()}`;
+    const branchName = `from_GitTestPulse`;
+    // const branchName = `test-case-${Date.now()}`;
     await axios.post(
       `https://api.github.com/repos/${owner}/${repoName}/git/refs`,
       {
