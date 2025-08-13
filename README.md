@@ -101,12 +101,18 @@ Click on any summary to generate full test case code.
 
 Optionally, click "Create Pull Request" to push generated test code back to GitHub.
 ## Screenshots
+Home Page : -
+<img width="1905" height="863" alt="Screenshot 2025-08-13 103706" src="https://github.com/user-attachments/assets/f30bb4c9-7dd8-49de-aa41-f804c7a4ce21" />
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+Fetching Github Repose : -
+<img width="1919" height="861" alt="Screenshot 2025-08-13 103838" src="https://github.com/user-attachments/assets/c2bc80a2-e20d-4abf-b1fa-ccdd0a44179f" />
+
+Generate Test Case Summary And Code of Selected Files : -
+<img width="1877" height="879" alt="Screenshot 2025-08-13 104105" src="https://github.com/user-attachments/assets/bd20a1a3-e517-4845-9989-141c0bdb39c8" />
 
 
 ## Support
 
-For support, email sgivamsharma06@gmail.com.
+For support, email sgivamsharma06@gmail.com , 
 Shivam Sharma
 
