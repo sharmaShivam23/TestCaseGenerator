@@ -18,10 +18,14 @@ function App() {
         <Routes>
           <Route path="/" element={<HomeMainPage />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
-          <Route element={<ProtectedLoginRoute />}>
+          {/* <Route element={<ProtectedLoginRoute />}> */}
             <Route path="/select-repo" element={<SelectRepo />} />
             <Route path="/select-files" element={<SelectFiles />} />
-          </Route>
+          {/* </Route> */}
+          {/* <Route element={<ProtectedLoginRoute />}>
+            <Route path="/select-repo" element={<SelectRepo />} />
+            <Route path="/select-files" element={<SelectFiles />} />
+          </Route> */}
         </Routes>
         <Footer />
       </Router>

@@ -7,7 +7,7 @@ import { FaExpand } from "react-icons/fa6";
 import { AiOutlineShrink } from "react-icons/ai";
 import { FaCopy } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-
+import SummaryFormatter from "../components/summaryFormatter";
 export default function SelectFiles() {
   const [files, setFiles] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -279,7 +279,9 @@ export default function SelectFiles() {
                   className="bg-black/30 p-4 rounded-lg border border-violet-500/30"
                 >
                   <h4 className="font-semibold text-violet-300">{item.file}</h4>
-                  <p className="text-white/80 mt-1">{item.summary}</p>
+                  {/* <p className="text-white/80 mt-1">bjk</p> */}
+                  <p className="text-white/80 mt-1"><SummaryFormatter text={item.summary}/></p>
+                  {/* <p className="text-white/80 mt-1">{item.summary}</p> */}
                   {loadingTestCase ? (
                     <Loader />
                   ) : (
