@@ -8,6 +8,10 @@ import { AiOutlineShrink } from "react-icons/ai";
 import { FaCopy } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import SummaryFormatter from "../components/summaryFormatter";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import CodeFormatter from "../components/codeFormatter";
+
 export default function SelectFiles() {
   const [files, setFiles] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -346,12 +350,28 @@ export default function SelectFiles() {
               </h3>
             </div>
           </div>
-          <pre
+          {/* <pre
             ref={paragraphRef2}
             className="bg-black/50 text-white p-3 rounded-lg overflow-x-auto whitespace-pre-wrap"
           >
             {testCode}
-          </pre>
+          </pre> */}
+          <div className="mt-4">
+  
+  <SyntaxHighlighter
+    language="javascript"
+    style={atomDark}
+    showLineNumbers
+    customStyle={{
+      borderRadius: "0.75rem",
+      padding: "1rem",
+      background: "rgba(17, 24, 39, 0.9)",
+    }}
+  >
+    {testCode}
+  </SyntaxHighlighter>
+</div>
+
         </div>
       )}
 
