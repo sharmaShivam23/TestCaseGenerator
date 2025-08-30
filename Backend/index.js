@@ -17,7 +17,7 @@ database();
 
 app.use(
   cors({
-    origin: [process.env.FRONTEND_URL || 'http://localhost:5173'],
+    origin: [process.env.FRONTEND_URL || 'http://localhost:5173' ,  "https://shivam23.vercel.app/"],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
