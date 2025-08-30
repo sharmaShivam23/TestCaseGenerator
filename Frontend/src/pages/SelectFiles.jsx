@@ -164,7 +164,7 @@ export default function SelectFiles() {
         prTitle: prTitle.trim() || "Add generated test cases",
       };
       
-      console.log("Creating PR with data:", requestData);
+      // console.log("Creating PR with data:", requestData);
       
       const response = await API.post("/create-pr", requestData);
 
@@ -360,7 +360,7 @@ export default function SelectFiles() {
       )}
 
       {/* //pull request section */}
-      {testCode && (
+      {/* {testCode && (
         <div className="mt-6 w-full max-w-7xl bg-white/10 backdrop-blur-md p-4 rounded-xl border border-violet-500/30">
           <h3 className="text-xl font-bold text-violet-300 mb-4">
             Create Pull Request:
@@ -422,7 +422,7 @@ export default function SelectFiles() {
             {loadingPush ? "Creating Pull Request..." : "Create Pull Request"}
           </button>
         </div>
-      )}
+      )} */}
 
       {testCode && (
         <div
@@ -510,7 +510,13 @@ export default function SelectFiles() {
                  background: "rgba(17, 24, 39, 0.9)",
                  fontSize: "14px",
                  lineHeight: "1.5",
+                     color: "#cdd6f4"
                }}
+                codeTagProps={{
+    style: {
+      color: "#cdd6f4", // default text
+    },
+  }}
              >
                {testCode}
              </SyntaxHighlighter>
