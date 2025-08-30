@@ -69,3 +69,6 @@ html {
   scrollbar-width: thin;
   scrollbar-color: #8a2be2 black;
 }
+.bgg {
+  background: linear-gradient(to bottom, #000 70%, #460F9E 100%);
+}

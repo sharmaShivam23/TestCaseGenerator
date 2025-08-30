@@ -22,8 +22,8 @@ function raf(time) {
 requestAnimationFrame(raf);
   return (
    <>
-    <div className='relative max-[770px]:h-[120vh] overflow-x-hidden max-[570px]:h-[130vh] min-h-screen h-auto '>
-  <div className='absolute inset-0 -z-10 blur-sm'>
+    <div className='relative  max-[770px]:h-[120vh]  overflow-x-hidden max-[570px]:h-[130vh] min-h-screen h-auto '>
+  <div className='absolute  sm:flex inset-0 -z-10 blur-sm'>
     <div className='w-full h-full bg-[linear-gradient(to_bottom,_#000_70%,_#460F9E_100%)]'>
     <img src={robot} className='absolute h-full z-10 sm:right-10' alt="" />
     </div>

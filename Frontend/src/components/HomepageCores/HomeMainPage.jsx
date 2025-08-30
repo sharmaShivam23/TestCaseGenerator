@@ -17,7 +17,8 @@ const HomeMainPage = () => {
   };
 
   return (
-    <div className="w-[90%] overflow-x-hidden sm:max-w-[80%] top-7 text-white bg-[linear-gradient(to_bottom,_#000_50%,_#460F9E_100%)] rounded-xl relative sm:top-20 m-auto z-50 min-h-[80vh] border border-[#666666]">
+    <div className="w-[100%] overflow-x-hidden sm:max-w-[80%] top-7 text-white bg-[linear-gradient(to_bottom,_#000_50%,_#460F9E_100%)] rounded-xl relative sm:top-20 m-auto z-50  h-auto
+    sm:min-h-[80vh] border border-[#666666]">
       <Navbar />
 
       <div className="main px-4 sm:px-14 py-6 flex flex-col-reverse sm:flex-row justify-center items-center gap-10">
