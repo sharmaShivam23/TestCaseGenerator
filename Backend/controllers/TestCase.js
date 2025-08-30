@@ -205,6 +205,17 @@ exports.createPR = async (req, res) => {
     if (!filePath || typeof filePath !== "string" || filePath.trim() === "") {
       return res.status(400).json({ message: "filePath is required and must be a string" });
     }
+    
+    // Clean up file path - remove leading slash if present
+    filePath = filePath.trim();
+    if (filePath.startsWith('/')) {
+      filePath = filePath.substring(1);
+    }
+    
+    // Validate file path format
+    if (!filePath || filePath.includes('..') || filePath.includes('//')) {
+      return res.status(400).json({ message: "Invalid file path format" });
+    }
     if (!content || typeof content !== "string") {
       return res.status(400).json({ message: "content is required and must be a string" });
     }
@@ -336,10 +347,26 @@ exports.createPR = async (req, res) => {
     }
     
     if (error.response?.status === 422) {
-      return res.status(422).json({
-        message: "Invalid request. Please check your repository and file path.",
-        error: error.response?.data?.message || "Unprocessable Entity"
-      });
+      const errorMessage = error.response?.data?.message || "Unprocessable Entity";
+      console.error("422 Error details:", error.response?.data);
+      
+      // Provide more specific error messages based on common 422 issues
+      if (errorMessage.includes("already exists")) {
+        return res.status(422).json({
+          message: "A file with this name already exists in the repository.",
+          error: errorMessage
+        });
+      } else if (errorMessage.includes("path")) {
+        return res.status(422).json({
+          message: "Invalid file path. Please check the path format and ensure it's valid for the repository.",
+          error: errorMessage
+        });
+      } else {
+        return res.status(422).json({
+          message: "Invalid request. Please check your repository and file path.",
+          error: errorMessage
+        });
+      }
     }
     
     return res.status(500).json({

@@ -149,6 +149,11 @@ export default function SelectFiles() {
       const directory = pathParts.join('/');
       testFilePath = `${directory}/${fileNameWithoutExt}.test.js`;
     }
+    
+    // Remove leading slash if present (GitHub API doesn't like it)
+    if (testFilePath.startsWith('/')) {
+      testFilePath = testFilePath.substring(1);
+    }
 
     setLoadingPush(true);
     try {
@@ -378,30 +383,35 @@ export default function SelectFiles() {
             <label className="block text-white text-sm font-medium mb-2">
               Test File Path:
             </label>
-            <div className="px-3 py-2 bg-black/30 border border-violet-500/30 rounded-lg text-white/80">
-              {(() => {
-                const filePath = selectedFiles[0];
-                if (!filePath) return "No file selected";
-                
-                const originalFileName = filePath.split('/').pop();
-                const fileNameWithoutExt = originalFileName.split('.')[0];
-                const fileExtension = originalFileName.split('.').pop();
-                
-                let testFilePath;
-                if (fileExtension === 'js' || fileExtension === 'jsx') {
-                  testFilePath = filePath.replace(`.${fileExtension}`, `.test.${fileExtension}`);
-                } else if (fileExtension === 'ts' || fileExtension === 'tsx') {
-                  testFilePath = filePath.replace(`.${fileExtension}`, `.test.${fileExtension}`);
-                } else {
-                  const pathParts = filePath.split('/');
-                  const fileName = pathParts.pop();
-                  const directory = pathParts.join('/');
-                  testFilePath = `${directory}/${fileNameWithoutExt}.test.js`;
-                }
-                
-                return testFilePath;
-              })()}
-            </div>
+                         <div className="px-3 py-2 bg-black/30 border border-violet-500/30 rounded-lg text-white/80">
+               {(() => {
+                 const filePath = selectedFiles[0];
+                 if (!filePath) return "No file selected";
+                 
+                 const originalFileName = filePath.split('/').pop();
+                 const fileNameWithoutExt = originalFileName.split('.')[0];
+                 const fileExtension = originalFileName.split('.').pop();
+                 
+                 let testFilePath;
+                 if (fileExtension === 'js' || fileExtension === 'jsx') {
+                   testFilePath = filePath.replace(`.${fileExtension}`, `.test.${fileExtension}`);
+                 } else if (fileExtension === 'ts' || fileExtension === 'tsx') {
+                   testFilePath = filePath.replace(`.${fileExtension}`, `.test.${fileExtension}`);
+                 } else {
+                   const pathParts = filePath.split('/');
+                   const fileName = pathParts.pop();
+                   const directory = pathParts.join('/');
+                   testFilePath = `${directory}/${fileNameWithoutExt}.test.js`;
+                 }
+                 
+                 // Remove leading slash if present
+                 if (testFilePath.startsWith('/')) {
+                   testFilePath = testFilePath.substring(1);
+                 }
+                 
+                 return testFilePath;
+               })()}
+             </div>
           </div>
           
           <button
@@ -447,21 +457,64 @@ export default function SelectFiles() {
           >
             {testCode}
           </pre> */}
-          <div className="mt-4">
-  
-  <SyntaxHighlighter
-    language="text"
-    style={atomDark}
-    showLineNumbers
-    customStyle={{
-      borderRadius: "0.75rem",
-      padding: "1rem",
-      background: "rgba(17, 24, 39, 0.9)",
-    }}
-  >
-    {testCode}
-  </SyntaxHighlighter>
-</div>
+                     <div className="mt-4">
+             <SyntaxHighlighter
+               language={(() => {
+                 // Detect language based on selected file
+                 const filePath = selectedFiles[0];
+                 if (!filePath) return "javascript";
+                 
+                 const fileExtension = filePath.split('.').pop()?.toLowerCase();
+                 
+                 const languageMap = {
+                   'js': 'javascript',
+                   'jsx': 'javascript',
+                   'ts': 'typescript',
+                   'tsx': 'typescript',
+                   'py': 'python',
+                   'java': 'java',
+                   'cpp': 'cpp',
+                   'c': 'c',
+                   'cs': 'csharp',
+                   'php': 'php',
+                   'rb': 'ruby',
+                   'go': 'go',
+                   'rs': 'rust',
+                   'swift': 'swift',
+                   'kt': 'kotlin',
+                   'scala': 'scala',
+                   'html': 'html',
+                   'css': 'css',
+                   'scss': 'scss',
+                   'sass': 'sass',
+                   'less': 'less',
+                   'json': 'json',
+                   'xml': 'xml',
+                   'yaml': 'yaml',
+                   'yml': 'yaml',
+                   'md': 'markdown',
+                   'sql': 'sql',
+                   'sh': 'bash',
+                   'bash': 'bash',
+                   'zsh': 'bash',
+                   'fish': 'bash'
+                 };
+                 
+                 return languageMap[fileExtension] || 'javascript';
+               })()}
+               style={atomDark}
+               showLineNumbers
+               customStyle={{
+                 borderRadius: "0.75rem",
+                 padding: "1rem",
+                 background: "rgba(17, 24, 39, 0.9)",
+                 fontSize: "14px",
+                 lineHeight: "1.5",
+               }}
+             >
+               {testCode}
+             </SyntaxHighlighter>
+           </div>
 
         </div>
       )}
