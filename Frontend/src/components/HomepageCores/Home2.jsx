@@ -12,7 +12,7 @@ const Home2 = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("token");
-    console.log(token);
+    // console.log(token);
     
     if (token) {
       localStorage.setItem("tokens", token);

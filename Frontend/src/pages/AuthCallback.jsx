@@ -8,7 +8,7 @@ export default function AuthCallback() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get("code");
-  console.log("c",code);
+  // console.log("c",code);
   
     if (code) {
      const r =   API.post("/auth/github", { code })
