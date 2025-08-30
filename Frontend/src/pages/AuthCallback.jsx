@@ -13,13 +13,13 @@ export default function AuthCallback() {
     if (code) {
      const r =   API.post("/auth/github", { code })
         .then((res) => {
-          console.log(r);
+          // console.log(r);
           
           localStorage.setItem("jwt", res.data.token);
           navigate("/select-repo");
         })
         .catch((err) => {
-          console.error(err);
+          // console.error(err);
           alert("GitHub login failed");
         });
     }

@@ -81,7 +81,7 @@ export default function SelectFiles() {
       }
       setSummaries(response?.data?.summaries || []);
     } catch (err) {
-      console.error("Failed to generate summaries:", err);
+      // console.error("Failed to generate summaries:", err);
       toast.error("Failed to generate test summary");
     } finally {
       setLoadingSummary(false);
@@ -99,7 +99,7 @@ export default function SelectFiles() {
       }
       setTestCode(res?.data?.testCode || "No test code generated");
     } catch (err) {
-      console.error("Failed to generate test code:", err);
+      // console.error("Failed to generate test code:", err);
       toast.error("Failed to generate test code");
     } finally {
       setLoadingTestCase(false);
@@ -176,7 +176,7 @@ export default function SelectFiles() {
         toast.success("Pull request created successfully!");
       }
     } catch (err) {
-      console.error("PR creation error:", err);
+      // console.error("PR creation error:", err);
       
       // Handle specific error cases
       if (err.response?.status === 401) {

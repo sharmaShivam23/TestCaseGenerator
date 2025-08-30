@@ -40,7 +40,8 @@ const Contact = () => {
       } else if (error?.response?.data?.message) {
         toast.error(error?.response?.data?.message);
       } else {
-        console.error("Error sending message:", error);
+        // console.error("Error sending message:", error);
+        toast.error("Error sending message:", error);
       }
     } finally {
       setLoading(false);

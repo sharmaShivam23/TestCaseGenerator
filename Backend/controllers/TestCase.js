@@ -198,6 +198,14 @@ exports.createPR = async (req, res) => {
   try {
     const { repo, filePath, content, prTitle } = req.body;
 
+    console.log("PR Creation Request:", {
+      repo,
+      filePath,
+      contentLength: content?.length,
+      prTitle,
+      hasContent: !!content
+    });
+
     // Validate inputs
     if (!repo || !/^[^/]+\/[^/]+$/.test(repo)) {
       return res.status(400).json({ message: "Invalid repo format. Use 'owner/repo'." });
@@ -219,6 +227,12 @@ exports.createPR = async (req, res) => {
     if (!content || typeof content !== "string") {
       return res.status(400).json({ message: "content is required and must be a string" });
     }
+    
+    // Validate content size (GitHub has limits)
+    if (content.length > 1000000) { // 1MB limit
+      return res.status(400).json({ message: "Content is too large. Please reduce the test code size." });
+    }
+    
     if (!prTitle || typeof prTitle !== "string" || prTitle.trim() === "") {
       return res.status(400).json({ message: "prTitle is required and must be a string" });
     }
@@ -239,7 +253,10 @@ exports.createPR = async (req, res) => {
     // Step 0: Get default branch
     const repoInfo = await axios.get(
       `https://api.github.com/repos/${owner}/${repoName}`,
-      { headers: { Authorization: `Bearer ${githubToken}` } }
+      { 
+        headers: { Authorization: `Bearer ${githubToken}` },
+        timeout: 30000 // 30 second timeout
+      }
     );
     // const baseBranch = "main"
     const baseBranch = repoInfo.data.default_branch;
@@ -247,7 +264,10 @@ exports.createPR = async (req, res) => {
     // Step 1: Get latest commit SHA from base branch
     const { data: baseRef } = await axios.get(
       `https://api.github.com/repos/${owner}/${repoName}/git/ref/heads/${baseBranch}`,
-      { headers: { Authorization: `Bearer ${githubToken}` } }
+      { 
+        headers: { Authorization: `Bearer ${githubToken}` },
+        timeout: 30000
+      }
     );
     const latestCommitSha = baseRef.object.sha;
 
@@ -260,7 +280,10 @@ exports.createPR = async (req, res) => {
           ref: `refs/heads/${branchName}`,
           sha: latestCommitSha
         },
-        { headers: { Authorization: `Bearer ${githubToken}` } }
+        { 
+          headers: { Authorization: `Bearer ${githubToken}` },
+          timeout: 30000
+        }
       );
     } catch (branchError) {
       // If branch already exists, try with a different name
@@ -272,7 +295,10 @@ exports.createPR = async (req, res) => {
             ref: `refs/heads/${fallbackBranchName}`,
             sha: latestCommitSha
           },
-          { headers: { Authorization: `Bearer ${githubToken}` } }
+          { 
+            headers: { Authorization: `Bearer ${githubToken}` },
+            timeout: 30000
+          }
         );
         branchName = fallbackBranchName;
       } else {
@@ -285,7 +311,10 @@ exports.createPR = async (req, res) => {
     try {
       const fileData = await axios.get(
         `https://api.github.com/repos/${owner}/${repoName}/contents/${filePath}?ref=${baseBranch}`,
-        { headers: { Authorization: `Bearer ${githubToken}` } }
+        { 
+          headers: { Authorization: `Bearer ${githubToken}` },
+          timeout: 30000
+        }
       );
       blobSha = fileData.data.sha; // Existing file SHA for updates
     } catch {
@@ -293,28 +322,72 @@ exports.createPR = async (req, res) => {
     }
 
     // Step 4: Create or update file in new branch
-    await axios.put(
-      `https://api.github.com/repos/${owner}/${repoName}/contents/${filePath}`,
-      {
-        message: prTitle || "Add generated test case",
-        content: Buffer.from(content).toString("base64"),
-        branch: branchName,
-        ...(blobSha ? { sha: blobSha } : {}) // only include sha if updating
-      },
-      { headers: { Authorization: `Bearer ${githubToken}` } }
-    );
+    console.log("Creating file in branch:", {
+      owner,
+      repoName,
+      filePath,
+      branchName,
+      contentLength: content.length,
+      hasBlobSha: !!blobSha
+    });
+    
+    try {
+      await axios.put(
+        `https://api.github.com/repos/${owner}/${repoName}/contents/${filePath}`,
+        {
+          message: prTitle || "Add generated test case",
+          content: Buffer.from(content).toString("base64"),
+          branch: branchName,
+          ...(blobSha ? { sha: blobSha } : {}) // only include sha if updating
+        },
+        { 
+          headers: { Authorization: `Bearer ${githubToken}` },
+          timeout: 30000
+        }
+      );
+      console.log("File created successfully");
+    } catch (fileError) {
+      console.error("File creation error:", {
+        status: fileError.response?.status,
+        message: fileError.response?.data?.message,
+        error: fileError.message
+      });
+      throw fileError;
+    }
 
     // Step 5: Create a pull request
-    const prData = await axios.post(
-      `https://api.github.com/repos/${owner}/${repoName}/pulls`,
-      {
-        title: prTitle || "Generated test cases",
-        head: branchName,
-        base: baseBranch,
-        body: "This PR contains auto-generated test cases."
-      },
-      { headers: { Authorization: `Bearer ${githubToken}` } }
-    );
+    console.log("Creating pull request:", {
+      owner,
+      repoName,
+      head: branchName,
+      base: baseBranch,
+      title: prTitle
+    });
+    
+    let prData;
+    try {
+      prData = await axios.post(
+        `https://api.github.com/repos/${owner}/${repoName}/pulls`,
+        {
+          title: prTitle || "Generated test cases",
+          head: branchName,
+          base: baseBranch,
+          body: "This PR contains auto-generated test cases."
+        },
+        { 
+          headers: { Authorization: `Bearer ${githubToken}` },
+          timeout: 30000
+        }
+      );
+      console.log("Pull request created successfully:", prData.data.html_url);
+    } catch (prError) {
+      console.error("Pull request creation error:", {
+        status: prError.response?.status,
+        message: prError.response?.data?.message,
+        error: prError.message
+      });
+      throw prError;
+    }
 
     return res.json({
       message: "PR created successfully",
@@ -369,9 +442,17 @@ exports.createPR = async (req, res) => {
       }
     }
     
+    // Log the full error for debugging
+    console.error("Full error details:", {
+      message: error.message,
+      stack: error.stack,
+      response: error.response?.data,
+      status: error.response?.status
+    });
+    
     return res.status(500).json({
-      message: "Failed to create PR",
-      error: error.response?.data || error.message
+      message: "Failed to create PR. Please check the server logs for more details.",
+      error: error.response?.data?.message || error.message
     });
   }
 };
