@@ -22,7 +22,7 @@ router.use('/auth', authController);
 
 router.get('/repos', auth , TestCase.listRepos); 
 router.get('/repos/files', auth, TestCase.getRepoFiles); 
-router.post('/generate/summary',  TestCase.generateSummary);
+router.post('/generate/summary', auth, TestCase.generateSummary);
 router.post('/generate/test',   TestCase.generateTestCase);
 router.post('/create-pr', auth , TestCase.createPR);
 router.post('/contact', contactFormLimiter, createContact);

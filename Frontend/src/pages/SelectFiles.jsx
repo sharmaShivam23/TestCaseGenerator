@@ -24,6 +24,7 @@ export default function SelectFiles() {
   const [loadingTestCase, setLoadingTestCase] = useState(false);
   const [expand, setExpand] = useState(false);
   const [loadingPush, setLoadingPush] = useState(false); //push request loding
+  const [prTitle, setPrTitle] = useState("Add generated test cases");
   const navigate = useNavigate();
 
   const paragraphRef = useRef(null);
@@ -119,34 +120,75 @@ export default function SelectFiles() {
       return;
     }
     if (!selectedFiles.length) {
-    toast.error("No file selected for PR");
-    return;
-  }
+      toast.error("No file selected for PR");
+      return;
+    }
+
+    // Validate file path
+    const filePath = selectedFiles[0];
+    if (!filePath || typeof filePath !== 'string') {
+      toast.error("Invalid file path selected");
+      return;
+    }
+
+    // Generate appropriate test file path
+    const originalFileName = filePath.split('/').pop();
+    const fileNameWithoutExt = originalFileName.split('.')[0];
+    const fileExtension = originalFileName.split('.').pop();
+    
+    // Create test file path based on the original file
+    let testFilePath;
+    if (fileExtension === 'js' || fileExtension === 'jsx') {
+      testFilePath = filePath.replace(`.${fileExtension}`, `.test.${fileExtension}`);
+    } else if (fileExtension === 'ts' || fileExtension === 'tsx') {
+      testFilePath = filePath.replace(`.${fileExtension}`, `.test.${fileExtension}`);
+    } else {
+      // For other file types, create a test file in the same directory
+      const pathParts = filePath.split('/');
+      const fileName = pathParts.pop();
+      const directory = pathParts.join('/');
+      testFilePath = `${directory}/${fileNameWithoutExt}.test.js`;
+    }
 
     setLoadingPush(true);
     try {
-      const branchName = `test-case-${Date.now()}`;
-      const res = {
-        repo : repo,
-        branch : branchName,
-        filePath: selectedFiles[0],
-        content: testCode,
-        prTitle: "Add generated test cases",
-      }
-      console.log(res);
-      
-      await API.post("/create-pr", {
+      const requestData = {
         repo,
-        // branch: branchName,
-        filePath: selectedFiles[0],
+        filePath: testFilePath,
         content: testCode,
-        prTitle: "Add generated test cases",
-      });
+        prTitle: prTitle.trim() || "Add generated test cases",
+      };
+      
+      console.log("Creating PR with data:", requestData);
+      
+      const response = await API.post("/create-pr", requestData);
 
-      toast.success(`Pull request created for branch ${branchName}`);
+      if (response?.data?.url) {
+        toast.success("Pull request created successfully!");
+        // Optionally open the PR in a new tab
+        window.open(response.data.url, '_blank');
+      } else {
+        toast.success("Pull request created successfully!");
+      }
     } catch (err) {
-      console.error(err);
-      toast.error("Failed to push code to GitHub");
+      console.error("PR creation error:", err);
+      
+      // Handle specific error cases
+      if (err.response?.status === 401) {
+        toast.error("Authentication failed. Please login again.");
+        // Optionally redirect to login
+        navigate("/login");
+      } else if (err.response?.status === 403) {
+        toast.error("Insufficient permissions. Please check repository access.");
+      } else if (err.response?.status === 404) {
+        toast.error("Repository not found or you don't have access to it.");
+      } else if (err.response?.status === 422) {
+        toast.error("Invalid request. Please check your repository and file path.");
+      } else if (err.response?.data?.message) {
+        toast.error(err.response.data.message);
+      } else {
+        toast.error("Failed to create pull request. Please try again.");
+      }
     } finally {
       setLoadingPush(false);
     }
@@ -312,15 +354,64 @@ export default function SelectFiles() {
         </div>
       )}
 
-      {/* //pull request button */}
+      {/* //pull request section */}
       {testCode && (
-        <button
-          onClick={pushCodeToGithub}
-          disabled={loadingPush}
-          className="mt-3 px-4 py-2 cursor-pointer rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm hover:shadow-[0_0_12px_rgba(16,185,129,0.8)] transition-all duration-300"
-        >
-          {loadingPush ? "Pushing to GitHub..." : "Push Code to GitHub"}
-        </button>
+        <div className="mt-6 w-full max-w-7xl bg-white/10 backdrop-blur-md p-4 rounded-xl border border-violet-500/30">
+          <h3 className="text-xl font-bold text-violet-300 mb-4">
+            Create Pull Request:
+          </h3>
+          
+          <div className="mb-4">
+            <label className="block text-white text-sm font-medium mb-2">
+              Pull Request Title:
+            </label>
+            <input
+              type="text"
+              value={prTitle}
+              onChange={(e) => setPrTitle(e.target.value)}
+              placeholder="Enter PR title..."
+              className="w-full px-3 py-2 bg-black/30 border border-violet-500/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-violet-400"
+            />
+          </div>
+          
+          <div className="mb-4">
+            <label className="block text-white text-sm font-medium mb-2">
+              Test File Path:
+            </label>
+            <div className="px-3 py-2 bg-black/30 border border-violet-500/30 rounded-lg text-white/80">
+              {(() => {
+                const filePath = selectedFiles[0];
+                if (!filePath) return "No file selected";
+                
+                const originalFileName = filePath.split('/').pop();
+                const fileNameWithoutExt = originalFileName.split('.')[0];
+                const fileExtension = originalFileName.split('.').pop();
+                
+                let testFilePath;
+                if (fileExtension === 'js' || fileExtension === 'jsx') {
+                  testFilePath = filePath.replace(`.${fileExtension}`, `.test.${fileExtension}`);
+                } else if (fileExtension === 'ts' || fileExtension === 'tsx') {
+                  testFilePath = filePath.replace(`.${fileExtension}`, `.test.${fileExtension}`);
+                } else {
+                  const pathParts = filePath.split('/');
+                  const fileName = pathParts.pop();
+                  const directory = pathParts.join('/');
+                  testFilePath = `${directory}/${fileNameWithoutExt}.test.js`;
+                }
+                
+                return testFilePath;
+              })()}
+            </div>
+          </div>
+          
+          <button
+            onClick={pushCodeToGithub}
+            disabled={loadingPush}
+            className="px-6 py-3 cursor-pointer rounded-lg font-semibold text-white bg-gradient-to-r from-green-500 to-emerald-600 shadow-lg hover:shadow-[0_0_15px_rgba(16,185,129,0.8)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loadingPush ? "Creating Pull Request..." : "Create Pull Request"}
+          </button>
+        </div>
       )}
 
       {testCode && (
@@ -359,7 +450,7 @@ export default function SelectFiles() {
           <div className="mt-4">
   
   <SyntaxHighlighter
-    language="javascript"
+    language="text"
     style={atomDark}
     showLineNumbers
     customStyle={{

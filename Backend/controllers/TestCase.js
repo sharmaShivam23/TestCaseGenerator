@@ -64,9 +64,9 @@ exports.getRepoFiles = async (req, res) => {
 };
 
 
-async function fetchFileContent(repo, path) {
+async function fetchFileContent(repo, path, token) {
   const res = await axios.get(`https://api.github.com/repos/${repo}/contents/${path}`, {
-    headers: { Authorization: `token ${process.env.GITHUB_TOKEN}` }
+    headers: { Authorization: `token ${token}` }
   });
 
   return {
@@ -83,8 +83,11 @@ exports.generateSummary = async (req, res) => {
   }
 
   try {
+    // Get user's GitHub token
+    const token = decrypt(req.user.githubAccessToken);
+    
     // Fetch real file contents from GitHub
-    const fileObjs = await Promise.all(files.map(path => fetchFileContent(repo, path)));
+    const fileObjs = await Promise.all(files.map(path => fetchFileContent(repo, path, token)));
 
     // Now pass proper objects to Gemini
     const summaries = await generateTestCaseSummaries(fileObjs);
@@ -205,10 +208,19 @@ exports.createPR = async (req, res) => {
     if (!content || typeof content !== "string") {
       return res.status(400).json({ message: "content is required and must be a string" });
     }
+    if (!prTitle || typeof prTitle !== "string" || prTitle.trim() === "") {
+      return res.status(400).json({ message: "prTitle is required and must be a string" });
+    }
 
-    const githubToken = process.env.GITHUB_TOKEN;
+    // Use the user's GitHub access token from OAuth
+    const githubToken = decrypt(req.user.githubAccessToken);
     if (!githubToken) {
-      return res.status(500).json({ message: "GitHub token not configured" });
+      return res.status(401).json({ message: "GitHub access token not found" });
+    }
+
+    // Validate that user has the required GitHub access token
+    if (!req.user.githubAccessToken) {
+      return res.status(401).json({ message: "GitHub access token not available. Please re-authenticate." });
     }
 
     const [owner, repoName] = repo.split("/");
@@ -229,16 +241,33 @@ exports.createPR = async (req, res) => {
     const latestCommitSha = baseRef.object.sha;
 
     // Step 2: Create a new branch
-    const branchName = `from_GitTestPulse`;
-    // const branchName = `test-case-${Date.now()}`;
-    await axios.post(
-      `https://api.github.com/repos/${owner}/${repoName}/git/refs`,
-      {
-        ref: `refs/heads/${branchName}`,
-        sha: latestCommitSha
-      },
-      { headers: { Authorization: `Bearer ${githubToken}` } }
-    );
+    let branchName = `test-case-${Date.now()}`;
+    try {
+      await axios.post(
+        `https://api.github.com/repos/${owner}/${repoName}/git/refs`,
+        {
+          ref: `refs/heads/${branchName}`,
+          sha: latestCommitSha
+        },
+        { headers: { Authorization: `Bearer ${githubToken}` } }
+      );
+    } catch (branchError) {
+      // If branch already exists, try with a different name
+      if (branchError.response?.status === 422) {
+        const fallbackBranchName = `test-case-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        await axios.post(
+          `https://api.github.com/repos/${owner}/${repoName}/git/refs`,
+          {
+            ref: `refs/heads/${fallbackBranchName}`,
+            sha: latestCommitSha
+          },
+          { headers: { Authorization: `Bearer ${githubToken}` } }
+        );
+        branchName = fallbackBranchName;
+      } else {
+        throw branchError;
+      }
+    }
 
     // Step 3: Check if file exists in base branch
     let blobSha = null;
@@ -283,6 +312,36 @@ exports.createPR = async (req, res) => {
 
   } catch (error) {
     console.error("GitHub API Error:", error.response?.data || error.message);
+    
+    // Handle specific GitHub API errors
+    if (error.response?.status === 401) {
+      return res.status(401).json({
+        message: "GitHub authentication failed. Please re-authenticate.",
+        error: "Unauthorized"
+      });
+    }
+    
+    if (error.response?.status === 403) {
+      return res.status(403).json({
+        message: "Insufficient permissions to create PR. Please check repository permissions.",
+        error: "Forbidden"
+      });
+    }
+    
+    if (error.response?.status === 404) {
+      return res.status(404).json({
+        message: "Repository not found or you don't have access to it.",
+        error: "Not Found"
+      });
+    }
+    
+    if (error.response?.status === 422) {
+      return res.status(422).json({
+        message: "Invalid request. Please check your repository and file path.",
+        error: error.response?.data?.message || "Unprocessable Entity"
+      });
+    }
+    
     return res.status(500).json({
       message: "Failed to create PR",
       error: error.response?.data || error.message

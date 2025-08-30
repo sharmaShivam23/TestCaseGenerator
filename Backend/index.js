@@ -36,6 +36,20 @@ app.use('/api', routes);
 
 app.get('/', (req, res) => res.send('GitHub OAuth TestGen API'));
 
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  res.status(500).json({
+    message: 'Internal server error',
+    error: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
+  });
+});
+
+// 404 handler
+app.use('*', (req, res) => {
+  res.status(404).json({ message: 'Route not found' });
+});
+
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`)
 );
