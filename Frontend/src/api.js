@@ -15,31 +15,4 @@ API.interceptors.request.use((req) => {
   return req;
 });
 
-// Response interceptor for better error handling
-API.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    // Handle authentication errors
-    if (error.response?.status === 401) {
-      // Clear invalid token
-      localStorage.removeItem("tokens");
-      // Optionally redirect to login
-      if (window.location.pathname !== "/login") {
-        window.location.href = "/login";
-      }
-    }
-    
-    // Log error for debugging
-    console.error("API Error:", {
-      status: error.response?.status,
-      message: error.response?.data?.message || error.message,
-      url: error.config?.url
-    });
-    
-    return Promise.reject(error);
-  }
-);
-
 export default API;
