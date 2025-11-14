@@ -27,21 +27,21 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Backend
+      # Build & push backend image
       - name: Build & Push Backend Image
         run: |
           docker build -t $BACKEND_IMAGE:latest -t $BACKEND_IMAGE:$IMAGE_TAG ./Backend
           docker push $BACKEND_IMAGE:latest
           docker push $BACKEND_IMAGE:$IMAGE_TAG
 
-      # Frontend
+      # Build & push frontend image
       - name: Build & Push Frontend Image
         run: |
           docker build -t $FRONTEND_IMAGE:latest -t $FRONTEND_IMAGE:$IMAGE_TAG ./Frontend
           docker push $FRONTEND_IMAGE:latest
           docker push $FRONTEND_IMAGE:$IMAGE_TAG
 
-      # Deploy on EC2
+      # Deploy to EC2
       - name: Deploy on AWS EC2 via SSH
         uses: appleboy/ssh-action@v0.1.10
         with:
@@ -61,14 +61,14 @@ jobs:
             sudo docker run -d --name backend \
               -p 5000:5000 \
               --restart always \
-              --env-file /home/${{ secrets.EC2_USER }}/TestCaseGenerator/Backend/.env \
+              --env-file /home/ec2-user/TestCaseGenerator/Backend/.env \
               ${BACKEND_IMAGE}:${IMAGE_TAG}
 
             echo "Running frontend container..."
             sudo docker run -d --name frontend \
               -p 3000:3000 \
               --restart always \
-              --env-file /home/${{ secrets.EC2_USER }}/TestCaseGenerator/Frontend/.env \
+              --env-file /home/ec2-user/TestCaseGenerator/Frontend/.env \
               ${FRONTEND_IMAGE}:${IMAGE_TAG}
 
             echo "✅ Deployment completed successfully!"
