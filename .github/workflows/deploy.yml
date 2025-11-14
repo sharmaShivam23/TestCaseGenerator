@@ -15,59 +15,61 @@ jobs:
       IMAGE_TAG: ${{ github.sha }}
 
     steps:
-      # Step 1: Checkout repository
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Step 2: Set up Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      # Step 3: Login to Docker Hub
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Step 4: Build & Push Backend Image
+      # Backend
       - name: Build & Push Backend Image
         run: |
           docker build -t $BACKEND_IMAGE:latest -t $BACKEND_IMAGE:$IMAGE_TAG ./Backend
           docker push $BACKEND_IMAGE:latest
           docker push $BACKEND_IMAGE:$IMAGE_TAG
 
-      # Step 5: Build & Push Frontend Image
+      # Frontend
       - name: Build & Push Frontend Image
         run: |
           docker build -t $FRONTEND_IMAGE:latest -t $FRONTEND_IMAGE:$IMAGE_TAG ./Frontend
           docker push $FRONTEND_IMAGE:latest
           docker push $FRONTEND_IMAGE:$IMAGE_TAG
 
-      # Step 6: Deploy to AWS EC2 via SSH
+      # Deploy on EC2
       - name: Deploy on AWS EC2 via SSH
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          envs: BACKEND_IMAGE,FRONTEND_IMAGE,IMAGE_TAG
+
           script: |
             echo "Pulling latest Docker images..."
-            sudo docker pull $BACKEND_IMAGE:$IMAGE_TAG
-            sudo docker pull $FRONTEND_IMAGE:$IMAGE_TAG
+            sudo docker pull ${BACKEND_IMAGE}:${IMAGE_TAG}
+            sudo docker pull ${FRONTEND_IMAGE}:${IMAGE_TAG}
 
-            echo "Stopping and removing old containers if they exist..."
-            sudo docker stop backend frontend || true
-            sudo docker rm backend frontend || true
+            echo "Stopping old containers..."
+            sudo docker rm -f backend frontend || true
 
-            echo "Running new backend container..."
-            sudo docker run -d --name backend -p 5000:5000 \
-              --env-file /home/${{ secrets.EC2_USER }}/TestCaseGenerator/Backend/.env \
-              $BACKEND_IMAGE:$IMAGE_TAG
+            echo "Running backend container..."
+            sudo docker run -d --name backend \
+              -p 5000:5000 \
+              --restart always \
+              --env-file /home/${USER}/TestCaseGenerator/Backend/.env \
+              ${BACKEND_IMAGE}:${IMAGE_TAG}
 
-            echo "Running new frontend container..."
-            sudo docker run -d --name frontend -p 3000:3000 \
-              --env-file /home/${{ secrets.EC2_USER }}/TestCaseGenerator/Frontend/.env \
-              $FRONTEND_IMAGE:$IMAGE_TAG
+            echo "Running frontend container on port 3000..."
+            sudo docker run -d --name frontend \
+              -p 3000:3000 \
+              --restart always \
+              --env-file /home/${USER}/TestCaseGenerator/Frontend/.env \
+              ${FRONTEND_IMAGE}:${IMAGE_TAG}
 
-            echo "✅ Deployment completed successfully!"
+            echo "✅ Deployment successful!"

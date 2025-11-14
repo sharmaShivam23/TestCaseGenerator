@@ -13,7 +13,7 @@ services:
     build: ./Frontend
     container_name: frontend
     ports:
-      - "3000:80"
-    depends_on:
-      - backend
+      - "3000:3000"
+    env_file:
+      - ./Frontend/.env
     restart: always
