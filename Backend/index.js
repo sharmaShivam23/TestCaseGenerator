@@ -17,7 +17,7 @@ database();
 
 app.use(
   cors({
-    origin: [process.env.FRONTEND_URL  ,  "https://shivam23.vercel.app"],
+    origin: [process.env.FRONTEND_URL  ,  "https://shivam23.vercel.app" , "https://sharmashivam.me"],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -45,10 +45,15 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 404 handler
+
 app.use('*', (req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
+
+app.get("/", (req, res) => {
+  res.send("Server is running fine! 🚀 Everything is working properly.");
+});
+
 
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`)
