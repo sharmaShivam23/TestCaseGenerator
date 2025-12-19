@@ -17,7 +17,7 @@ database();
 
 app.use(
   cors({
-    origin: [process.env.FRONTEND_URL  ,  "https://shivam23.vercel.app" , "https://sharmashivam.me"],
+    origin: [process.env.FRONTEND_URL  ,  "https://shivam23.vercel.app" , "https://www.sharmashivam.me"],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
